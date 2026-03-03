@@ -99,7 +99,7 @@ public class AccountAPI extends AltoroAPI {
 			myJson.put("accountId", accountNo);
 			return Response.status(Response.Status.OK).entity(myJson.toString()).type(MediaType.APPLICATION_JSON_TYPE).build();
 		}catch (JSONException e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("An error has occurred: " + e.getLocalizedMessage()).build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("A large error has occurred: " + e.getLocalizedMessage()).build();
 		}
 	}
 
