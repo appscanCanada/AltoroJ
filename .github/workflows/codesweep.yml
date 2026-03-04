@@ -19,6 +19,6 @@ jobs:
           fetch-depth: 0
 
       - name: Run HCL AppScan CodeSweep
-        uses: HCL-TECH-SOFTWARE/appscan-codesweep-action@v1
+        uses: HCL-TECH-SOFTWARE/appscan-codesweep-action@v2.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
