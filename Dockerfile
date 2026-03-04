@@ -1,0 +1,4 @@
+FROM nginx:latest
+USER root
+
+AWS_SECRET_ACCESS_KEY=je7MtGbClwBF/@Zp9Utk/h3yCo8nvbEXAMPLEKEY
