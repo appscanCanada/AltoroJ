@@ -1,6 +1,6 @@
 name: "HCL AppScan SAST/SCA"
 on:
-  workflow_dispatch
+  workflow_dispatch:
 jobs:
   scan:
     runs-on: ubuntu-latest
@@ -14,4 +14,3 @@ jobs:
           asoc_secret: ${{secrets.APPSCAN_SECRET}}
           application_id: ${{secrets.APPSCAN_APP_ID}}
           service_url: https://cloud.appscan.com
-          acceptssl: false
