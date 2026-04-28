@@ -5,8 +5,10 @@ war {
     webAppDirectory.set(file('WebContent'))
 }
 
-sourceCompatibility = "1.7"; 
-targetCompatibility = "1.7";
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+}
 
 repositories {
 	mavenCentral()
@@ -22,7 +24,6 @@ sourceSets {
         }
     }
 }
-
 
 dependencies {
     implementation fileTree(dir: 'WebContent/WEB-INF/lib', include: ['*.jar'])
@@ -40,7 +41,6 @@ dependencies {
 	// REQUIRED for compilation, provided by Tomcat at runtime
     compileOnly 'javax.servlet:javax.servlet-api:3.0.1'
 }
-
 
 war {
 	archiveName 'altoromutual.war'
