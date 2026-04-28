@@ -32,6 +32,10 @@ dependencies {
     implementation 'org.glassfish.jersey.inject:jersey-hk2:2.27'
     implementation 'log4j:log4j:1.2.16'
     implementation 'org.apache.wink:wink-json4j:1.4'
+
+	
+	// REQUIRED for compilation, provided by Tomcat at runtime
+    compileOnly 'javax.servlet:javax.servlet-api:3.0.1'
 }
 
 
