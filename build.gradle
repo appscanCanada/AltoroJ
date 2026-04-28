@@ -43,7 +43,7 @@ dependencies {
 }
 
 war {
-	archiveName 'altoromutual.war'
-	exclude 'WEB-INF/classes/**/*.class'
-	exclude 'WEB-INF/lib/**/*.jar'
+    archiveFileName.set('altoromutual.war')
+    exclude 'WEB-INF/classes/**/*.class'
+    exclude 'WEB-INF/lib/**/*.jar'
 }
