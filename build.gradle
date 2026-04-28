@@ -1,7 +1,10 @@
+apply plugin: 'java'
+apply plugin: 'war
 
-apply plugin: 'war'
+war {
+    webAppDirectory.set(file('WebContent'))
+}
 
-webAppDirName = 'WebContent'
 sourceCompatibility = "1.7"; 
 targetCompatibility = "1.7";
 
