@@ -14,3 +14,13 @@ jobs:
           asoc_secret: ${{secrets.APPSCAN_SECRET}}
           application_id: ${{secrets.APPSCAN_APP_ID}}
           service_url: https://cloud.appscan.com
+          acceptssl: false
+          personal_scan: false
+          static_analysis_only: true
+          open_source_only: false
+          secrets_only: false
+          scan_build_outputs: false
+          wait_for_analysis: true
+          analysis_timeout_minutes: 30
+          fail_for_noncompliance: false
+          failure_threshold: Low
