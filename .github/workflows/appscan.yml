@@ -12,7 +12,7 @@ jobs:
         with:
           asoc_key: ${{secrets.APPSCAN_KEY}}
           asoc_secret: ${{secrets.APPSCAN_SECRET}}
-          application_id: 8a9bb7c7-892d-4cf0-bfda-43527a100fdc
+          application_id: 87f7367f-698c-409f-99a7-aaa7d03f7d3b
           static_analysis_only: true
           wait_for_analysis: true
           acceptssl: false
