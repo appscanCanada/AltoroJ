@@ -16,3 +16,4 @@ jobs:
           static_analysis_only: true
           wait_for_analysis: true
           acceptssl: false
+          scan_build_outputs: true
