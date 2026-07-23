@@ -14,4 +14,4 @@ jobs:
           asoc_secret: ${{secrets.APPSCAN_SECRET}}
           application_id: ${{secrets.APPSCAN_APP_ID}}
           service_url: https://cloud.appscan.com
-          acceptssl: true
+          acceptssl: false
