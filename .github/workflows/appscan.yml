@@ -1,26 +1,17 @@
-name: "HCL AppScan SAST/SCA"
+name: "HCL AppScan SAST"
 on:
-  workflow_dispatch:
+  workflow_dispatch
 jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Run AppScan SAST/SCA scan
-        uses: HCL-TECH-SOFTWARE/appscan-sast-action@v1.0.9
+      - name: Run AppScan SAST scan
+        uses: HCL-TECH-SOFTWARE/appscan-sast-action@v1.0.7
         with:
           asoc_key: ${{secrets.APPSCAN_KEY}}
           asoc_secret: ${{secrets.APPSCAN_SECRET}}
-          application_id: 8a9bb7c7-892d-4cf0-bfda-43527a100fdc
+          application_id: ${{secrets.APPSCAN_APP_ID}}
           service_url: https://cloud.appscan.com
-          acceptssl: false
-          personal_scan: false
-          static_analysis_only: true
-          open_source_only: false
-          secrets_only: false
-          scan_build_outputs: false
-          wait_for_analysis: true
-          analysis_timeout_minutes: 30
-          fail_for_noncompliance: false
-          failure_threshold: Low
+          acceptssl: true
