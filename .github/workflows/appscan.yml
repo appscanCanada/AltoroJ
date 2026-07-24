@@ -5,7 +5,6 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      #rodney's yaml file
       - name: Checkout
         uses: actions/checkout@v6
       - name: Run AppScan SAST scan
