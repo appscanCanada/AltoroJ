@@ -15,3 +15,5 @@ jobs:
           application_id: ${{secrets.APPSCAN_APP_ID}}
           service_url: https://cloud.appscan.com
           acceptssl: false
+          static_analysis_only: true
+          wait_for_analysis: true
