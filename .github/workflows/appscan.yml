@@ -5,10 +5,11 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
+      #rodney's yaml file
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Run AppScan SAST scan
-        uses: HCL-TECH-SOFTWARE/appscan-sast-action@v1.0.7
+        uses: HCL-TECH-SOFTWARE/appscan-sast-action@v1.1.0
         with:
           asoc_key: ${{secrets.APPSCAN_KEY}}
           asoc_secret: ${{secrets.APPSCAN_SECRET}}
