@@ -4,8 +4,8 @@ pipeline:
   tags: {}
   stages:
     - stage:
-        name: deploy-guestbook
-        identifier: deployguestbook
+        name: deploy-altoroj
+        identifier: deployaltoroj
         description: ""
         type: Deployment
         spec:
