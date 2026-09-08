@@ -11,9 +11,9 @@ pipeline:
         spec:
           deploymentType: Kubernetes
           service:
-            serviceRef: harnessguestbook
+            serviceRef: harness_altoroj
           environment:
-            environmentRef: harnessdevenv
+            environmentRef: altorojdevenv
             deployToAll: false
             infrastructureDefinitions:
               - identifier: harnessk8sinfra
