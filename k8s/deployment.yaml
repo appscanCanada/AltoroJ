@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: altoroj
+  labels:
+    app: altoroj
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: altoroj
+  template:
+    metadata:
+      labels:
+        app: altoroj
+    spec:
+      containers:
+        - name: altoroj
+          image: <your-registry>/altoroj:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
