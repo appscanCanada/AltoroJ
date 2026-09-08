@@ -4,5 +4,21 @@ service:
   orgIdentifier: default
   projectIdentifier: default_project
   serviceDefinition:
-    spec: {}
+    spec:
+      manifests:
+        - manifest:
+            identifier: altoroj
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: appscanCanada
+                  gitFetchType: Branch
+                  paths:
+                    - k8s/service.yaml
+                    - k8s/deployment.yaml
+                  branch: AltoroJ-3.2
+              skipResourceVersioning: false
+              enableDeclarativeRollback: false
     type: Kubernetes
