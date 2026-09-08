@@ -3,3 +3,6 @@ service:
   identifier: harness_altoroj
   orgIdentifier: default
   projectIdentifier: default_project
+  serviceDefinition:
+    spec: {}
+    type: Kubernetes
