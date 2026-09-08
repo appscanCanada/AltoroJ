@@ -22,3 +22,4 @@ jobs:
           static_analysis_only: true
           #open_source_only: true
           wait_for_analysis: true
+          github_token: ${{github.token}}
