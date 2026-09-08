@@ -16,7 +16,7 @@ pipeline:
             environmentRef: altorojdevenv
             deployToAll: false
             infrastructureDefinitions:
-              - identifier: harnessk8sinfra
+              - identifier: altoroj_k8sinfra
           execution:
             steps:
               - step:
