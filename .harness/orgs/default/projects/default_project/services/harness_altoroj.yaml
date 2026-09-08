@@ -1,0 +1,5 @@
+service:
+  name: harness_altoroj
+  identifier: harness_altoroj
+  orgIdentifier: default
+  projectIdentifier: default_project
