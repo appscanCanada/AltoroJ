@@ -1,0 +1,13 @@
+infrastructureDefinition:
+  name: altoroj_k8sinfra
+  identifier: altoroj_k8sinfra
+  orgIdentifier: default
+  projectIdentifier: default_project
+  environmentRef: altorojdevenv
+  deploymentType: Kubernetes
+  type: KubernetesDirect
+  spec:
+    connectorRef: harnessk8sconnector
+    namespace: default
+    releaseName: release-<+INFRA_KEY_SHORT_ID>
+  allowSimultaneousDeployments: false
