@@ -16,8 +16,8 @@ service:
                   connectorRef: appscanCanada
                   gitFetchType: Branch
                   paths:
-                    - k8s/service.yaml
                     - k8s/deployment.yaml
+                    - k8s/service.yaml
                   branch: AltoroJ-3.2
               skipResourceVersioning: false
               enableDeclarativeRollback: false
