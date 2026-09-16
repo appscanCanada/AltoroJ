@@ -43,17 +43,16 @@ pipeline:
                           pkill -f "kubectl port-forward.*8080:80" || true
 
                           # Start port-forward in background
-                          # nohup sudo kubectl port-forward svc/altoroj 8080:80 -n default > /home/ubuntu/harness/port-forward.log 2>&1 &
-                          sudo kubectl port-forward svc/altoroj 8080:80 -n default &
+                          nohup sudo kubectl port-forward svc/altoroj 8080:80 -n default > /tmp/port-forward.log 2>&1 &
 
                           # Give it a moment to start
-                          sleep 2
+                          sleep 5
 
                           # Verify it's running
                           if pgrep -f "sudo kubectl port-forward.*8080:80" > /dev/null; then
                             echo "Port-forward started successfully. AltoroJ accessible at http://localhost:8080"
                           else
-                            echo "Warning: Port-forward may not have started. Check /tmp/port-forward.log"
+                            echo "Warning: Port-forward may not have started. Check -> /tmp/port-forward.log"
                             cat /tmp/port-forward.log
                           fi
                     environmentVariables: []
