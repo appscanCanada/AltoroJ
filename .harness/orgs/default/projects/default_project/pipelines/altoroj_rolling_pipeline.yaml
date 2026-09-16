@@ -43,6 +43,7 @@ pipeline:
                           whoami
                           id
                           pkill -f "kubectl port-forward.*8080:80" || true
+                          sleep 1
 
                           # Start port-forward in background with sudo
                           nohup kubectl port-forward svc/altoroj 8080:80 -n default --address=0.0.0.0 > /tmp/port-forward.log 2>&1 &
