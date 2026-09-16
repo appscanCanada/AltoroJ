@@ -34,30 +34,33 @@ pipeline:
                   timeout: 1m
                   spec:
                     shell: Bash
-                    executionTarget: {}
+                    onDelegate: false
+                    executionTarget:
+                      host: localhost
+                      connectorRef: harness_sshconnector
+                      workingDirectory: /tmp
                     source:
                       type: Inline
                       spec:
                         script: |
                           # Kill any existing port-forward on port 8080
-                          pkill -f "kubectl port-forward.*8080:80" || true
-
-                          # Start port-forward in background
-                          nohup sudo kubectl port-forward svc/altoroj 8080:80 -n default > /tmp/port-forward.log 2>&1 &
-
+                          sudo pkill -f "kubectl port-forward.*8080:80" || true
+                          
+                          # Start port-forward in background with sudo
+                          sudo nohup kubectl port-forward svc/altoroj 8080:80 -n default --address=0.0.0.0 > /tmp/port-forward.log 2>&1 &
+                          
                           # Give it a moment to start
-                          sleep 5
-
+                          sleep 2
+                          
                           # Verify it's running
-                          if pgrep -f "sudo kubectl port-forward.*8080:80" > /dev/null; then
+                          if pgrep -f "kubectl port-forward.*8080:80" > /dev/null; then
                             echo "Port-forward started successfully. AltoroJ accessible at http://localhost:8080"
                           else
-                            echo "Warning: Port-forward may not have started. Check -> /tmp/port-forward.log"
+                            echo "Warning: Port-forward may not have started. Check /tmp/port-forward.log"
                             cat /tmp/port-forward.log
                           fi
                     environmentVariables: []
                     outputVariables: []
-                  delegateSelectors: []
             rollbackSteps:
               - step:
                   name: Rollback Rollout Deployment
