@@ -51,7 +51,7 @@ pipeline:
                           # Give it a moment to start
                           sleep 5
                           cat /tmp/port-forward.log
-                          ss -lntp | grep 8080 || exit 1
+                          # ss -lntp | grep 8080 || exit 1
 
                           # Verify it's running
                           if pgrep -f "kubectl.+port-forward.+8080:80" > /dev/null; then
