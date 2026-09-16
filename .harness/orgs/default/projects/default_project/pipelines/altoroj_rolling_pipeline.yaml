@@ -34,26 +34,22 @@ pipeline:
                   timeout: 1m
                   spec:
                     shell: Bash
-                    onDelegate: false
-                    executionTarget:
-                      host: localhost
-                      connectorRef: harness_sshconnector
-                      workingDirectory: /tmp
+                    executionTarget: {}
                     source:
                       type: Inline
                       spec:
                         script: |
                           # Kill any existing port-forward on port 8080
                           sudo pkill -f "kubectl port-forward.*8080:80" || true
-                          
+
                           # Start port-forward in background with sudo
                           sudo nohup kubectl port-forward svc/altoroj 8080:80 -n default --address=0.0.0.0 > /tmp/port-forward.log 2>&1 &
-                          
+
                           # Give it a moment to start
-                          sleep 2
-                          
+                          sleep 3
+
                           # Verify it's running
-                          if pgrep -f "kubectl port-forward.*8080:80" > /dev/null; then
+                          if pgrep -f "sudo kubectl port-forward.*8080:80" > /dev/null; then
                             echo "Port-forward started successfully. AltoroJ accessible at http://localhost:8080"
                           else
                             echo "Warning: Port-forward may not have started. Check /tmp/port-forward.log"
