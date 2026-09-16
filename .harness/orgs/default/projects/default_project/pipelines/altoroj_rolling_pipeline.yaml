@@ -49,7 +49,7 @@ pipeline:
                           sleep 3
 
                           # Verify it's running
-                          if pgrep -f "sudo kubectl port-forward.*8080:80" > /dev/null; then
+                          if pgrep -f "kubectl.+port-forward.+8080" > /dev/null; then
                             echo "Port-forward started successfully. AltoroJ accessible at http://localhost:8080"
                           else
                             echo "Warning: Port-forward may not have started. Check /tmp/port-forward.log"
