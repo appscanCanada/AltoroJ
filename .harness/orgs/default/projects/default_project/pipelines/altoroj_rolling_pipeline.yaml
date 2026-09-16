@@ -40,13 +40,15 @@ pipeline:
                       spec:
                         script: |
                           # Kill any existing port-forward on port 8080
+                          whoami
+                          id
                           pkill -f "kubectl port-forward.*8080:80" || true
 
                           # Start port-forward in background with sudo
-                          nohup kubectl port-forward svc/altoroj 8080:80 -n default --address=0.0.0.0 > /tmp/port-forward.log &
+                          nohup kubectl port-forward svc/altoroj 8080:80 -n default --address=0.0.0.0 > /tmp/port-forward.log 2>&1 &
 
                           # Give it a moment to start
-                          sleep 3
+                          sleep 5
 
                           # Verify it's running
                           if pgrep -f "kubectl.+port-forward.+8080:80" > /dev/null; then
