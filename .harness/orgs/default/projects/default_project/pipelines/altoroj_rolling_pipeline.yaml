@@ -53,7 +53,7 @@ pipeline:
 
                           #tests
                           ps -ef | grep port-forward
-                          ss -lntp | grep 8080
+                          netstat -lntp | grep 8080
                           curl http://127.0.0.1:8080
                           cat /tmp/port-forward.log
 
