@@ -49,11 +49,12 @@ pipeline:
                           kubectl port-forward svc/altoroj 8080:80 -n default --address=0.0.0.0 > /tmp/port-forward.log 2>&1 &
 
                           # Give it a moment to start
-                          sleep 5
+                          sleep 3
 
                           #tests
                           ps -ef | grep -i port-forward
                           lsof -i :8080
+                          sleep 2
                           curl http://127.0.0.1:8080
                           cat /tmp/port-forward.log
 
