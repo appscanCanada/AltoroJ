@@ -46,12 +46,16 @@ pipeline:
                           sleep 1
 
                           # Start port-forward in background with sudo
-                          nohup kubectl port-forward svc/altoroj 8080:80 -n default --address=0.0.0.0 > /tmp/port-forward.log 2>&1 &
+                          kubectl port-forward svc/altoroj 8080:80 -n default --address=0.0.0.0 > /tmp/port-forward.log 2>&1 &
 
                           # Give it a moment to start
                           sleep 5
+
+                          #tests
+                          ps -ef | grep port-forward
+                          ss -lntp | grep 8080
+                          curl http://127.0.0.1:8080
                           cat /tmp/port-forward.log
-                          # ss -lntp | grep 8080 || exit 1
 
                           # Verify it's running
                           if pgrep -f "kubectl.+port-forward.+8080:80" > /dev/null; then
