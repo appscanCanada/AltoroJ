@@ -67,17 +67,17 @@ pipeline:
                             cat /tmp/port-forward.log
                           fi
 
-                          # adding temp testing
-                          # echo "Pipeline paused."
-                          # echo "Run: touch /tmp/continue_pipeline"
-                          # echo "Waiting..."
+                          adding temp testing
+                          echo "Pipeline paused."
+                          echo "Run: touch /tmp/continue_pipeline"
+                          echo "Waiting..."
 
-                          # while [ ! -f /tmp/continue_pipeline ]; do
-                          #  sleep 5
-                          # done
+                          while [ ! -f /tmp/continue_pipeline ]; do
+                          sleep 5
+                          done
 
-                          # rm -f /tmp/continue_pipeline
-                          # echo "Continuing..."
+                          rm -f /tmp/continue_pipeline
+                          echo "Continuing..."
                     environmentVariables: []
                     outputVariables: []
             rollbackSteps:
