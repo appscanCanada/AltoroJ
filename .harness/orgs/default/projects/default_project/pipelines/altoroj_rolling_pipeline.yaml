@@ -42,6 +42,7 @@ pipeline:
                           # Kill any existing port-forward on port 8080
                           whoami
                           id
+                          hostname
                           pkill -f "kubectl port-forward.*8080:80" || true
                           sleep 1
 
@@ -67,16 +68,16 @@ pipeline:
                           fi
 
                           # adding temp testing
-                          echo "Pipeline paused."
-                          echo "Run: touch /tmp/continue_pipeline"
-                          echo "Waiting..."
+                          # echo "Pipeline paused."
+                          # echo "Run: touch /tmp/continue_pipeline"
+                          # echo "Waiting..."
 
-                          while [ ! -f /tmp/continue_pipeline ]; do
-                            sleep 5
-                          done
+                          # while [ ! -f /tmp/continue_pipeline ]; do
+                          #  sleep 5
+                          # done
 
-                          rm -f /tmp/continue_pipeline
-                          echo "Continuing..."
+                          # rm -f /tmp/continue_pipeline
+                          # echo "Continuing..."
                     environmentVariables: []
                     outputVariables: []
             rollbackSteps:
