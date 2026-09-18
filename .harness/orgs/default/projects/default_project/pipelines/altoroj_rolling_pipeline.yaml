@@ -27,6 +27,59 @@ pipeline:
                   spec:
                     skipDryRun: false
                     pruningEnabled: false
+              - step:
+                  name: Start Port Forward
+                  identifier: startPortForward
+                  type: ShellScript
+                  timeout: 10m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          # Kill any existing port-forward on port 8080
+                          whoami
+                          id
+                          hostname
+                          pkill -f "kubectl port-forward.*8080:80" || true
+                          sleep 1
+
+                          # Start port-forward in background with sudo
+                          kubectl port-forward svc/altoroj 8088:80 -n default --address=0.0.0.0 > /tmp/port-forward.log 2>&1 &
+
+                          # Give it a moment to start
+                          sleep 3
+
+                          #tests
+                          ps -ef | grep -i port-forward
+                          #lsof -i :8080
+                          sleep 2
+                          curl http://127.0.0.1:8080
+                          cat /tmp/port-forward.log
+
+                          # Verify it's running
+                          if pgrep -f "kubectl.+port-forward.+8080:80" > /dev/null; then
+                            echo "Port-forward started successfully. AltoroJ accessible at http://localhost:8080"
+                          else
+                            echo "Warning: Port-forward may not have started. Check /tmp/port-forward.log"
+                            cat /tmp/port-forward.log
+                          fi
+
+                          adding temp testing
+                          echo "Pipeline paused."
+                          echo "Run: touch /tmp/continue_pipeline"
+                          echo "Waiting..."
+
+                          while [ ! -f /tmp/continue_pipeline ]; do
+                          sleep 5
+                          done
+
+                          rm -f /tmp/continue_pipeline
+                          echo "Continuing..."
+                    environmentVariables: []
+                    outputVariables: []
             rollbackSteps:
               - step:
                   name: Rollback Rollout Deployment
