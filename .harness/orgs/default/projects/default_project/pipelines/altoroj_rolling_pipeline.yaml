@@ -48,10 +48,10 @@ pipeline:
                         script: |
                           echo "Building Docker image..."
                           cd /tmp/altoroj-build
-                          
+
                           # Build the Docker image
-                          docker build -t altoroj:latest .
-                          
+                          docker build -t 192.168.69.115:5443/altoroj:1.0 .
+
                           echo "Docker image built successfully"
                           docker images | grep altoroj
                     environmentVariables: []
@@ -71,21 +71,21 @@ pipeline:
                       spec:
                         script: |
                           echo "Deploying AltoroJ container..."
-                          
+
                           # Stop and remove existing container if it exists
                           docker stop altoroj 2>/dev/null || true
                           docker rm altoroj 2>/dev/null || true
-                          
+
                           # Run the new container
                           docker run -d \
                             --name altoroj \
                             --restart unless-stopped \
                             -p 8080:8080 \
                             altoroj:latest
-                          
+
                           # Wait for container to start
                           sleep 5
-                          
+
                           # Verify container is running
                           if docker ps | grep -q altoroj; then
                             echo "AltoroJ container is running successfully"
@@ -113,11 +113,11 @@ pipeline:
                       spec:
                         script: |
                           echo "Performing health check..."
-                          
+
                           # Wait for app to be ready
                           MAX_RETRIES=12
                           RETRY_COUNT=0
-                          
+
                           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
                             if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080 | grep -q "200\|302"; then
                               echo "Health check passed! AltoroJ is responding."
@@ -128,7 +128,7 @@ pipeline:
                             sleep 5
                             RETRY_COUNT=$((RETRY_COUNT+1))
                           done
-                          
+
                           echo "WARNING: Health check did not get a 200/302 response, but container may still be starting"
                           docker logs altoroj --tail 20
                     environmentVariables: []
