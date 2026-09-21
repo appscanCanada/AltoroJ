@@ -81,7 +81,7 @@ pipeline:
                             --name altoroj \
                             --restart unless-stopped \
                             -p 8080:8080 \
-                            altoroj:latest
+                            192.168.69.115:5443/altoroj:1.0
 
                           # Wait for container to start
                           sleep 5
