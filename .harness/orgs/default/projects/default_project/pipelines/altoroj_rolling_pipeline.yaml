@@ -9,6 +9,8 @@ pipeline:
         description: ""
         type: Deployment
         spec:
+          delegateSelectors:
+            - docker-delegate
           deploymentType: Kubernetes
           service:
             serviceRef: harness_altoroj
