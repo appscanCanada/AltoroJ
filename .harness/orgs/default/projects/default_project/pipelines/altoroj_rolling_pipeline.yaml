@@ -1,37 +1,21 @@
 pipeline:
+  name: altoroj_rolling_pipeline
+  identifier: altoroj_rolling_pipeline
   projectIdentifier: default_project
   orgIdentifier: default
   tags: {}
   stages:
     - stage:
-        name: deploy-altoroj
-        identifier: deployaltoroj
-        description: ""
-        type: Deployment
+        name: build-and-deploy-docker
+        identifier: buildanddeploydocker
+        description: Build and deploy AltoroJ as a Docker container on the delegate host
+        type: Custom
         spec:
-          delegateSelectors:
-            - docker-delegate
-          deploymentType: Kubernetes
-          service:
-            serviceRef: harness_altoroj
-          environment:
-            environmentRef: altorojdevenv
-            deployToAll: false
-            infrastructureDefinitions:
-              - identifier: altoroj_k8sinfra
           execution:
             steps:
               - step:
-                  name: Rollout Deployment
-                  identifier: rolloutDeployment
-                  type: K8sRollingDeploy
-                  timeout: 10m
-                  spec:
-                    skipDryRun: false
-                    pruningEnabled: false
-              - step:
-                  name: Start Port Forward
-                  identifier: startPortForward
+                  name: Clone Repository
+                  identifier: cloneRepository
                   type: ShellScript
                   timeout: 10m
                   spec:
@@ -41,55 +25,116 @@ pipeline:
                       type: Inline
                       spec:
                         script: |
-                          # Kill any existing port-forward on port 8080
-                          whoami
-                          id
-                          hostname
-                          pkill -f "kubectl port-forward.*8080:80" || true
-                          sleep 1
-
-                          # Start port-forward in background with sudo
-                          kubectl port-forward svc/altoroj 8080:80 -n default --address=0.0.0.0 > /tmp/port-forward.log 2>&1 &
-
-                          # Give it a moment to start
-                          sleep 3
-
-                          #tests
-                          ps -ef | grep -i port-forward
-                          #lsof -i :8080
-                          sleep 2
-                          curl http://127.0.0.1:8080
-                          cat /tmp/port-forward.log
-
-                          # Verify it's running
-                          if pgrep -f "kubectl.+port-forward.+8080:80" > /dev/null; then
-                            echo "Port-forward started successfully. AltoroJ accessible at http://localhost:8080"
-                          else
-                            echo "Warning: Port-forward may not have started. Check /tmp/port-forward.log"
-                            cat /tmp/port-forward.log
-                          fi
-
-                          adding temp testing
-                          echo "Pipeline paused."
-                          echo "Run: touch /tmp/continue_pipeline"
-                          echo "Waiting..."
-
-                          while [ ! -f /tmp/continue_pipeline ]; do
-                          sleep 5
-                          done
-
-                          rm -f /tmp/continue_pipeline
-                          echo "Continuing..."
+                          echo "Cloning AltoroJ repository..."
+                          rm -rf /tmp/altoroj-build
+                          git clone --branch AltoroJ-3.2 https://github.com/appscanCanada/AltoroJ.git /tmp/altoroj-build
+                          echo "Repository cloned successfully"
+                          ls -la /tmp/altoroj-build
                     environmentVariables: []
                     outputVariables: []
-            rollbackSteps:
+                    delegateSelectors:
+                      - docker-delegate
               - step:
-                  name: Rollback Rollout Deployment
-                  identifier: rollbackRolloutDeployment
-                  type: K8sRollingRollback
+                  name: Build Docker Image
+                  identifier: buildDockerImage
+                  type: ShellScript
+                  timeout: 15m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Building Docker image..."
+                          cd /tmp/altoroj-build
+                          
+                          # Build the Docker image
+                          docker build -t altoroj:latest .
+                          
+                          echo "Docker image built successfully"
+                          docker images | grep altoroj
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
+              - step:
+                  name: Deploy Container
+                  identifier: deployContainer
+                  type: ShellScript
                   timeout: 10m
                   spec:
-                    pruningEnabled: false
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Deploying AltoroJ container..."
+                          
+                          # Stop and remove existing container if it exists
+                          docker stop altoroj 2>/dev/null || true
+                          docker rm altoroj 2>/dev/null || true
+                          
+                          # Run the new container
+                          docker run -d \
+                            --name altoroj \
+                            --restart unless-stopped \
+                            -p 8080:8080 \
+                            altoroj:latest
+                          
+                          # Wait for container to start
+                          sleep 5
+                          
+                          # Verify container is running
+                          if docker ps | grep -q altoroj; then
+                            echo "AltoroJ container is running successfully"
+                            echo "Access the application at http://<delegate-host>:8080"
+                            docker ps | grep altoroj
+                          else
+                            echo "ERROR: Container failed to start"
+                            docker logs altoroj
+                            exit 1
+                          fi
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
+              - step:
+                  name: Health Check
+                  identifier: healthCheck
+                  type: ShellScript
+                  timeout: 5m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Performing health check..."
+                          
+                          # Wait for app to be ready
+                          MAX_RETRIES=12
+                          RETRY_COUNT=0
+                          
+                          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080 | grep -q "200\|302"; then
+                              echo "Health check passed! AltoroJ is responding."
+                              curl -I http://127.0.0.1:8080 2>/dev/null | head -5
+                              exit 0
+                            fi
+                            echo "Waiting for AltoroJ to be ready... (attempt $((RETRY_COUNT+1))/$MAX_RETRIES)"
+                            sleep 5
+                            RETRY_COUNT=$((RETRY_COUNT+1))
+                          done
+                          
+                          echo "WARNING: Health check did not get a 200/302 response, but container may still be starting"
+                          docker logs altoroj --tail 20
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
         tags: {}
         failureStrategies:
           - onFailure:
@@ -97,5 +142,3 @@ pipeline:
                 - AllErrors
               action:
                 type: StageRollback
-  identifier: altoroj_rolling_pipeline
-  name: altoroj_rolling_pipeline
