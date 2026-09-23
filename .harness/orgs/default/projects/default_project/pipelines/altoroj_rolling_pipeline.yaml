@@ -135,6 +135,30 @@ pipeline:
                     outputVariables: []
                     delegateSelectors:
                       - docker-delegate
+              - step:
+                  name: AppScan API Login
+                  identifier: appscanApiLogin
+                  type: ShellScript
+                  timeout: 5m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          curl -X 'POST' \
+                            'https://cloud.appscan.com/api/v4/Account/ApiKeyLogin' \
+                            -H 'accept: application/json' \
+                            -H 'Content-Type: application/json' \
+                            -d '{
+                            "KeyId": "<+secrets.getValue("appscan_key_id")>",
+                            "KeySecret": "<+secrets.getValue("appscan_key_secret")>"
+                          }'
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
         tags: {}
         failureStrategies:
           - onFailure:
