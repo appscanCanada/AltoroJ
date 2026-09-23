@@ -147,16 +147,31 @@ pipeline:
                       type: Inline
                       spec:
                         script: |
-                          curl -X 'POST' \
+                          RESPONSE=$(curl -s -X 'POST' \
                             'https://cloud.appscan.com/api/v4/Account/ApiKeyLogin' \
                             -H 'accept: application/json' \
                             -H 'Content-Type: application/json' \
                             -d '{
                             "KeyId": "<+secrets.getValue("appscan_key_id")>",
                             "KeySecret": "<+secrets.getValue("appscan_key_secret")>"
-                          }'
+                          }')
+
+                          echo "API Response: $RESPONSE"
+
+                          APPSCAN_TOKEN=$(echo "$RESPONSE" | jq -r '.Token')
+
+                          if [ -z "$APPSCAN_TOKEN" ] || [ "$APPSCAN_TOKEN" == "null" ]; then
+                            echo "ERROR: Failed to extract token from response"
+                            exit 1
+                          fi
+
+                          export APPSCAN_TOKEN
+                          echo "Successfully obtained AppScan Bearer token"
                     environmentVariables: []
-                    outputVariables: []
+                    outputVariables:
+                      - name: APPSCAN_TOKEN
+                        type: String
+                        value: APPSCAN_TOKEN
                     delegateSelectors:
                       - docker-delegate
         tags: {}
