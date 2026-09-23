@@ -158,9 +158,9 @@ pipeline:
 
                           echo "API Response: $RESPONSE"
 
-                          APPSCAN_TOKEN=$(echo "$RESPONSE" | jq -r '.Token')
+                          APPSCAN_TOKEN=$(echo "$RESPONSE" | sed -n 's/.*"Token":"\([^"]*\)".*/\1/p')
 
-                          if [ -z "$APPSCAN_TOKEN" ] || [ "$APPSCAN_TOKEN" == "null" ]; then
+                          if [ -z "$APPSCAN_TOKEN" ]; then
                             echo "ERROR: Failed to extract token from response"
                             exit 1
                           fi
