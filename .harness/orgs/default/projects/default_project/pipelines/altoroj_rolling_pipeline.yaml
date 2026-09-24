@@ -174,6 +174,39 @@ pipeline:
                         value: APPSCAN_TOKEN
                     delegateSelectors:
                       - docker-delegate
+              - step:
+                  name: Create DAST Scan
+                  identifier: createDastScan
+                  type: ShellScript
+                  timeout: 5m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Creating DAST scan in AppScan on Cloud..."
+
+                          RESPONSE=$(curl -s -X 'POST' \
+                            'https://cloud.appscan.com/api/v4/Scans/Dast' \
+                            -H "Authorization: Bearer <+execution.steps.appscanApiLogin.output.outputVariables.APPSCAN_TOKEN>" \
+                            -H 'Content-Type: application/json' \
+                            -d '<+fileStore.getAsString("scanConfig.json")>')
+
+                          echo "DAST Scan Response: $RESPONSE"
+
+                          if echo "$RESPONSE" | grep -q '"Id"'; then
+                            echo "Successfully created DAST scan"
+                          else
+                            echo "ERROR: Failed to create DAST scan"
+                            echo "Response: $RESPONSE"
+                            exit 1
+                          fi
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
         tags: {}
         failureStrategies:
           - onFailure:
