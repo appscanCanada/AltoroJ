@@ -196,15 +196,32 @@ pipeline:
 
                           echo "DAST Scan Response: $RESPONSE"
 
-                          if echo "$RESPONSE" | grep -q '"Id"'; then
-                            echo "Successfully created DAST scan"
-                          else
-                            echo "ERROR: Failed to create DAST scan"
-                            echo "Response: $RESPONSE"
+                          # Extract ScanId from LatestExecution (unique field name, direct extraction)
+                          SCAN_ID=$(echo "$RESPONSE" | grep -o '"ScanId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
+
+                          # Extract Id from LatestExecution (get section after LatestExecution, then first Id)
+                          EXECUTION_ID=$(echo "$RESPONSE" | sed 's/.*"LatestExecution"[[:space:]]*:[[:space:]]*{/\n/' | grep -o '"Id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
+
+                          if [ -z "$SCAN_ID" ] || [ -z "$EXECUTION_ID" ]; then
+                            echo "ERROR: Failed to extract IDs from response"
+                            echo "SCAN_ID: $SCAN_ID"
+                            echo "EXECUTION_ID: $EXECUTION_ID"
                             exit 1
                           fi
+
+                          export SCAN_ID
+                          export EXECUTION_ID
+                          echo "Successfully created DAST scan"
+                          echo "Scan ID: $SCAN_ID"
+                          echo "Execution ID: $EXECUTION_ID"
                     environmentVariables: []
-                    outputVariables: []
+                    outputVariables:
+                      - name: SCAN_ID
+                        type: String
+                        value: SCAN_ID
+                      - name: EXECUTION_ID
+                        type: String
+                        value: EXECUTION_ID
                     delegateSelectors:
                       - docker-delegate
         tags: {}
