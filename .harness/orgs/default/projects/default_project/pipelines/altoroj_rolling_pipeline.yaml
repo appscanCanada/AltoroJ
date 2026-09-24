@@ -199,7 +199,7 @@ pipeline:
                           # Extract ScanId from LatestExecution (unique field name, direct extraction)
                           SCAN_ID=$(echo "$RESPONSE" | grep -o '"ScanId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
 
-                          # Extract Id from LatestExecution (get section after LatestExecution, then first Id)
+                          # Extract Id from LatestExecution
                           EXECUTION_ID=$(echo "$RESPONSE" | grep -o '"Id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
 
                           if [ -z "$SCAN_ID" ] || [ -z "$EXECUTION_ID" ]; then
