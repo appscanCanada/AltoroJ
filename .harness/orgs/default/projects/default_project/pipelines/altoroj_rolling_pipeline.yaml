@@ -192,7 +192,7 @@ pipeline:
                             'https://cloud.appscan.com/api/v4/Scans/Dast' \
                             -H "Authorization: Bearer <+execution.steps.appscanApiLogin.output.outputVariables.APPSCAN_TOKEN>" \
                             -H 'Content-Type: application/json' \
-                            -d '<+fileStore.getAsString("scanConfig.json")>')
+                            -d '<+fileStore.getAsString("/scanConfig.json")>')
 
                           echo "DAST Scan Response: $RESPONSE"
 
