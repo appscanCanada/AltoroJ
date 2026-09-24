@@ -200,7 +200,7 @@ pipeline:
                           SCAN_ID=$(echo "$RESPONSE" | grep -o '"ScanId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
 
                           # Extract Id from LatestExecution (get section after LatestExecution, then first Id)
-                          EXECUTION_ID=$(echo "$RESPONSE" | sed 's/.*"LatestExecution"[[:space:]]*:[[:space:]]*{/\n/' | grep -o '"Id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
+                          EXECUTION_ID=$(echo "$RESPONSE" | grep -o '"Id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
 
                           if [ -z "$SCAN_ID" ] || [ -z "$EXECUTION_ID" ]; then
                             echo "ERROR: Failed to extract IDs from response"
