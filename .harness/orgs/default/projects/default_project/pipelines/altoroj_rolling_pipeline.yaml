@@ -245,6 +245,19 @@ pipeline:
 
                           echo "DAST Execution Response: $RESPONSE"
 
+                          # Extract execution status from response
+                          EXECUTION_STATUS=$(echo "$RESPONSE" | sed -n 's/.*"Status":[[:space:]]*"\([^"]*\)".*/\1/p')
+
+                           if [ -z "$EXECUTION_STATUS" ] ; then
+                            echo "ERROR: Failed to extract execution status from response"
+                            echo "EXECUTION_STATUS: $EXECUTION_STATUS"
+                            exit 1
+                          fi
+
+                          export EXECUTION_STATUS
+                          echo "Successfully captured execution status"
+                          echo "Execution Status: $EXECUTION_STATUS"
+
                           export EXECUTION_RESPONSE="$RESPONSE"
                     environmentVariables: []
                     outputVariables:
