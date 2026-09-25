@@ -197,10 +197,10 @@ pipeline:
                           echo "DAST Scan Response: $RESPONSE"
 
                           # Extract Id from LatestExecution
-                          SCAN_ID=$(echo "$RESPONSE" | grep -oz '"LatestExecution":[^{]*[{]' | sed 's/\"Id\":.*\"\([^\"]*\)\",/\1/')
+                          EXECUTION_ID=$(echo "$RESPONSE" | sed -n '/"LatestExecution"[[:space:]]*:/,/^[[:space:]]*}/ {s/.*"Id":[[:space:]]*"\([^"]*\)".*/\1/p}' | head -1)
 
                           # Extract ScanId from LatestExecution
-                          EXECUTION_ID=$(echo "$RESPONSE" | sed -n 's/.*"ScanId":[[:space:]]*"\([^"]*\)".*/\1/p')
+                          SCAN_ID=$(echo "$RESPONSE" | sed -n 's/.*"ScanId":[[:space:]]*"\([^"]*\)".*/\1/p')
 
                           if [ -z "$SCAN_ID" ] || [ -z "$EXECUTION_ID" ]; then
                             echo "ERROR: Failed to extract IDs from response"
