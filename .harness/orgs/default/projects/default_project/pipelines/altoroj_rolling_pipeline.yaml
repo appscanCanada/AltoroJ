@@ -224,48 +224,69 @@ pipeline:
                         value: EXECUTION_ID
                     delegateSelectors:
                       - docker-delegate
-              - step:
-                  name: Get DAST Execution Status
-                  identifier: getDastExecutionStatus
-                  type: ShellScript
-                  timeout: 5m
-                  spec:
-                    shell: Bash
-                    executionTarget: {}
-                    source:
-                      type: Inline
-                      spec:
-                        script: |
-                          echo "Getting DAST execution status..."
+              - stepGroup:
+                  name: Poll DAST Status
+                  identifier: pollDastStatus
+                  strategy:
+                    repeat:
+                      times: 120
+                      while: <+repeat.iteration> == 0 || <+repeat.output.steps.getDastExecutionStatus.output.outputVariables.EXECUTION_STATUS> != "Ready"
+                  steps:
+                    - step:
+                        name: Get DAST Execution Status
+                        identifier: getDastExecutionStatus
+                        type: ShellScript
+                        timeout: 5m
+                        spec:
+                          shell: Bash
+                          executionTarget: {}
+                          source:
+                            type: Inline
+                            spec:
+                              script: |
+                                echo "Getting DAST execution status..."
 
-                          RESPONSE=$(curl -s -X 'GET' \
-                            "https://cloud.appscan.com/api/v4/Scans/DastExecution/<+execution.steps.createDastScan.output.outputVariables.EXECUTION_ID>" \
-                            -H 'accept: application/json' \
-                            -H "Authorization: Bearer <+execution.steps.appscanApiLogin.output.outputVariables.APPSCAN_TOKEN>")
+                                RESPONSE=$(curl -s -X 'GET' \
+                                  "https://cloud.appscan.com/api/v4/Scans/DastExecution/<+execution.steps.createDastScan.output.outputVariables.EXECUTION_ID>" \
+                                  -H 'accept: application/json' \
+                                  -H "Authorization: Bearer <+execution.steps.appscanApiLogin.output.outputVariables.APPSCAN_TOKEN>")
 
-                          echo "DAST Execution Response: $RESPONSE"
+                                echo "DAST Execution Response: $RESPONSE"
 
-                          # Extract execution status from response
-                          EXECUTION_STATUS=$(echo "$RESPONSE" | sed -n 's/.*"Status":[[:space:]]*"\([^"]*\)".*/\1/p')
+                                # Extract execution status from response
+                                EXECUTION_STATUS=$(echo "$RESPONSE" | sed -n 's/.*"Status":[[:space:]]*"\([^"]*\)".*/\1/p')
 
-                           if [ -z "$EXECUTION_STATUS" ] ; then
-                            echo "ERROR: Failed to extract execution status from response"
-                            echo "EXECUTION_STATUS: $EXECUTION_STATUS"
-                            exit 1
-                          fi
+                                 if [ -z "$EXECUTION_STATUS" ] ; then
+                                  echo "ERROR: Failed to extract execution status from response"
+                                  echo "EXECUTION_STATUS: $EXECUTION_STATUS"
+                                  exit 1
+                                fi
 
-                          export EXECUTION_STATUS
-                          echo "Successfully captured execution status"
-                          echo "Execution Status: $EXECUTION_STATUS"
+                                export EXECUTION_STATUS
+                                echo "Successfully captured execution status"
+                                echo "Execution Status: $EXECUTION_STATUS"
 
-                          export EXECUTION_RESPONSE="$RESPONSE"
-                    environmentVariables: []
-                    outputVariables:
-                      - name: EXECUTION_RESPONSE
-                        type: String
-                        value: EXECUTION_RESPONSE
-                    delegateSelectors:
-                      - docker-delegate
+                                export EXECUTION_RESPONSE="$RESPONSE"
+                          environmentVariables: []
+                          outputVariables:
+                            - name: EXECUTION_STATUS
+                              type: String
+                              value: EXECUTION_STATUS
+                            - name: EXECUTION_RESPONSE
+                              type: String
+                              value: EXECUTION_RESPONSE
+                          delegateSelectors:
+                            - docker-delegate
+                    - step:
+                        name: Wait Before Retry
+                        identifier: waitBeforeRetry
+                        type: Wait
+                        timeout: 10m
+                        spec:
+                          duration: 30s
+                        when:
+                          stageStatus: Success
+                          condition: <+execution.steps.pollDastStatus.steps.getDastExecutionStatus.output.outputVariables.EXECUTION_STATUS> != "Ready"
         tags: {}
         failureStrategies:
           - onFailure:
