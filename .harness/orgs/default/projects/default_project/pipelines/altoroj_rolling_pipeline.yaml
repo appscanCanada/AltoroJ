@@ -224,6 +224,35 @@ pipeline:
                         value: EXECUTION_ID
                     delegateSelectors:
                       - docker-delegate
+              - step:
+                  name: Get DAST Execution Status
+                  identifier: getDastExecutionStatus
+                  type: ShellScript
+                  timeout: 5m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Getting DAST execution status..."
+
+                          RESPONSE=$(curl -s -X 'GET' \
+                            "https://cloud.appscan.com/api/v4/Scans/DastExecution/<+execution.steps.createDastScan.output.outputVariables.EXECUTION_ID>" \
+                            -H 'accept: application/json' \
+                            -H "Authorization: Bearer <+execution.steps.appscanApiLogin.output.outputVariables.APPSCAN_TOKEN>")
+
+                          echo "DAST Execution Response: $RESPONSE"
+
+                          export EXECUTION_RESPONSE="$RESPONSE"
+                    environmentVariables: []
+                    outputVariables:
+                      - name: EXECUTION_RESPONSE
+                        type: String
+                        value: EXECUTION_RESPONSE
+                    delegateSelectors:
+                      - docker-delegate
         tags: {}
         failureStrategies:
           - onFailure:
