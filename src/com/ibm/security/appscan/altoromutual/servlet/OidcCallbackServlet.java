@@ -14,7 +14,7 @@ public class OidcCallbackServlet extends HttpServlet {
 
     String form = "grant_type=authorization_code"
         + "&client_id=altoro"
-        + "&client_secret=YOUR_SECRET"
+        + "&client_secret=ZFjUh4SGWLBj7OzuTb6H2ZrM9U3P9492JcloaoFvvSNIlfmRyQT3oTpLw5bbrj8XTmnVkx6Vywh1E09gErNByO"
         + "&code=" + URLEncoder.encode(code, "UTF-8") + "&redirect_uri="
         + URLEncoder.encode("http://localhost:8088/altoromutual/oidc/callback", "UTF-8");
 
