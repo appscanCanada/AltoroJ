@@ -24,7 +24,7 @@ public class OidcCallbackServlet extends HttpServlet {
     String form = "grant_type=authorization_code"
         + "&client_id=altoro"
         + "&client_secret="
-          + "ZFjUh4SGWLBj7OzuTb6H2ZrM9U3P9492JcloaoFvvSNIlfmRyQT3oTpLw5bbrj8XTmnVkx6Vywh1E09gErNByO"
+        + "ZFjUh4SGWLBj7OzuTb6H2ZrM9U3P9492JcloaoFvvSNIlfmRyQT3oTpLw5bbrj8XTmnVkx6Vywh1E09gErNByO"
         + "&code=" + URLEncoder.encode(code, "UTF-8") + "&redirect_uri="
         + URLEncoder.encode("http://localhost:8088/altoromutual/oidc/callback", "UTF-8");
 
@@ -49,13 +49,16 @@ public class OidcCallbackServlet extends HttpServlet {
       json.append(line);
     }
 
-    HttpSession session = request.getSession(true);
+    JSONObject tokenResponse = new JSONObject(json.toString());
+      String idToken = tokenResponse.getString("id_token");
 
-    Cookie accountCookie = ServletUtil.establishSession("jsmith", session);
+    String[] parts = idToken.split("\\.");
+    String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]), "UTF-8");
+    JSONObject jwtPayload = new JSONObject(payload);
+    String username = jwtPayload.getString("preferred_username");
 
-    response.addCookie(accountCookie);
-
-    response.sendRedirect(request.getContextPath() + "/bank/main.jsp");
-    response.getWriter().println(username);
+    response.setContentType("text/plain");
+    response.getWriter().println("Username from Keycloak: " + username);
+    return;
   }
 }
