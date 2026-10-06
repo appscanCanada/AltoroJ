@@ -1,19 +1,19 @@
 package com.ibm.security.appscan.altoromutual.servlet;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
+import com.ibm.security.appscan.altoromutual.util.ServletUtil;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import com.ibm.security.appscan.altoromutual.util.ServletUtil;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class OidcCallbackServlet extends HttpServlet {
   @Override
@@ -23,7 +23,8 @@ public class OidcCallbackServlet extends HttpServlet {
 
     String form = "grant_type=authorization_code"
         + "&client_id=altoro"
-        + "&client_secret=ZFjUh4SGWLBj7OzuTb6H2ZrM9U3P9492JcloaoFvvSNIlfmRyQT3oTpLw5bbrj8XTmnVkx6Vywh1E09gErNByO"
+        + "&client_secret="
+          + "ZFjUh4SGWLBj7OzuTb6H2ZrM9U3P9492JcloaoFvvSNIlfmRyQT3oTpLw5bbrj8XTmnVkx6Vywh1E09gErNByO"
         + "&code=" + URLEncoder.encode(code, "UTF-8") + "&redirect_uri="
         + URLEncoder.encode("http://localhost:8088/altoromutual/oidc/callback", "UTF-8");
 
@@ -49,15 +50,11 @@ public class OidcCallbackServlet extends HttpServlet {
     }
 
     HttpSession session = request.getSession(true);
- 
-Cookie accountCookie =
-ServletUtil.establishSession(
-"jsmith",
-session);
- 
-response.addCookie(accountCookie);
- 
-response.sendRedirect(
-request.getContextPath() + "/bank/main.jsp");
+
+    Cookie accountCookie = ServletUtil.establishSession("jsmith", session);
+
+    response.addCookie(accountCookie);
+
+    response.sendRedirect(request.getContextPath() + "/bank/main.jsp");
   }
 }
