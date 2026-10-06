@@ -64,7 +64,7 @@ public class OidcCallbackServlet extends HttpServlet {
       response.getWriter().println("Username from Keycloak: " + username);
       return;
     } catch (JSONException e) {
-        e.printStackTrace();
+      e.printStackTrace();
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }
