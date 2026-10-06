@@ -1,40 +1,288 @@
 pipeline:
+  name: altoroj_rolling_pipeline
+  identifier: altoroj_rolling_pipeline
   projectIdentifier: default_project
   orgIdentifier: default
   tags: {}
   stages:
     - stage:
-        name: deploy-altoroj
-        identifier: deployaltoroj
-        description: ""
-        type: Deployment
+        name: build-and-deploy-docker
+        identifier: buildanddeploydocker
+        description: Build and deploy AltoroJ as a Docker container on the delegate host
+        type: Custom
         spec:
-          deploymentType: Kubernetes
-          service:
-            serviceRef: harness_altoroj
-          environment:
-            environmentRef: altorojdevenv
-            deployToAll: false
-            infrastructureDefinitions:
-              - identifier: altoroj_k8sinfra
           execution:
             steps:
               - step:
-                  name: Rollout Deployment
-                  identifier: rolloutDeployment
-                  type: K8sRollingDeploy
+                  name: Clone Repository
+                  identifier: cloneRepository
+                  type: ShellScript
                   timeout: 10m
                   spec:
-                    skipDryRun: false
-                    pruningEnabled: false
-            rollbackSteps:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Cloning AltoroJ repository..."
+                          rm -rf /tmp/altoroj-build
+                          git clone --branch AltoroJ-3.2 https://github.com/appscanCanada/AltoroJ.git /tmp/altoroj-build
+                          echo "Repository cloned successfully"
+                          ls -la /tmp/altoroj-build
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
               - step:
-                  name: Rollback Rollout Deployment
-                  identifier: rollbackRolloutDeployment
-                  type: K8sRollingRollback
+                  name: Build Docker Image
+                  identifier: buildDockerImage
+                  type: ShellScript
+                  timeout: 15m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Building Docker image..."
+                          cd /tmp/altoroj-build
+
+                          # Build the Docker image
+                          docker build -t 192.168.69.115:5443/altoroj:1.0 .
+
+                          echo "Docker image built successfully"
+                          docker images | grep altoroj
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
+              - step:
+                  name: Deploy Container
+                  identifier: deployContainer
+                  type: ShellScript
                   timeout: 10m
                   spec:
-                    pruningEnabled: false
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Deploying AltoroJ container..."
+
+                          # Stop and remove existing container if it exists
+                          docker stop altoroj 2>/dev/null || true
+                          docker rm altoroj 2>/dev/null || true
+
+                          # Run the new container
+                          docker run -d \
+                            --name altoroj \
+                            --restart unless-stopped \
+                            -p 8085:8080 \
+                            192.168.69.115:5443/altoroj:1.0
+
+                          # Wait for container to start
+                          sleep 20
+
+                          # Verify container is running
+                          if docker ps | grep -q altoroj; then
+                            echo "AltoroJ container is running successfully"
+                            echo "Access the application at http://<delegate-host>:8085"
+                            docker ps | grep altoroj
+                          else
+                            echo "ERROR: Container failed to start"
+                            docker logs altoroj
+                            exit 1
+                          fi
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
+              - step:
+                  name: Health Check
+                  identifier: healthCheck
+                  type: ShellScript
+                  timeout: 5m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Performing health check..."
+
+                          # Wait for app to be ready
+                          MAX_RETRIES=12
+                          RETRY_COUNT=0
+
+                          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8085 | grep -q "200\|302"; then
+                              echo "Health check passed! AltoroJ is responding."
+                              curl -I http://127.0.0.1:8085 2>/dev/null | head -5
+                              exit 0
+                            fi
+                            echo "Waiting for AltoroJ to be ready... (attempt $((RETRY_COUNT+1))/$MAX_RETRIES)"
+                            sleep 5
+                            RETRY_COUNT=$((RETRY_COUNT+1))
+                          done
+
+                          echo "WARNING: Health check did not get a 200/302 response, but container may still be starting"
+                          docker logs altoroj --tail 20
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
+              - step:
+                  name: AppScan API Login
+                  identifier: appscanApiLogin
+                  type: ShellScript
+                  timeout: 5m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          RESPONSE=$(curl -s -X 'POST' \
+                            'https://cloud.appscan.com/api/v4/Account/ApiKeyLogin' \
+                            -H 'accept: application/json' \
+                            -H 'Content-Type: application/json' \
+                            -d '{
+                            "KeyId": "<+secrets.getValue("appscan_key_id")>",
+                            "KeySecret": "<+secrets.getValue("appscan_key_secret")>"
+                          }')
+
+                          echo "API Response: $RESPONSE"
+
+                          APPSCAN_TOKEN=$(echo "$RESPONSE" | sed -n 's/.*"Token":.*"\([^"]*\)".*/\1/p')
+
+                          if [ -z "$APPSCAN_TOKEN" ]; then
+                            echo "ERROR: Failed to extract token from response"
+                            exit 1
+                          fi
+
+                          export APPSCAN_TOKEN
+                          echo "Successfully obtained AppScan Bearer token"
+                    environmentVariables: []
+                    outputVariables:
+                      - name: APPSCAN_TOKEN
+                        type: String
+                        value: APPSCAN_TOKEN
+                    delegateSelectors:
+                      - docker-delegate
+              - step:
+                  name: Create DAST Scan
+                  identifier: createDastScan
+                  type: ShellScript
+                  timeout: 5m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Creating DAST scan in AppScan on Cloud..."
+
+                          RESPONSE=$(curl -s -X 'POST' \
+                            'https://cloud.appscan.com/api/v4/Scans/Dast' \
+                            -H "Authorization: Bearer <+execution.steps.appscanApiLogin.output.outputVariables.APPSCAN_TOKEN>" \
+                            -H 'Content-Type: application/json' \
+                            -d '<+fileStore.getAsString("/scanConfig.json")>')
+
+                          echo "DAST Scan Response: $RESPONSE"
+
+                          # Extract Id from LatestExecution
+                          EXECUTION_ID=$(echo "$RESPONSE" | sed -n '/"LatestExecution"[[:space:]]*:/,/^[[:space:]]*}/ {s/.*"Id":[[:space:]]*"\([^"]*\)".*/\1/p}' | head -1)
+
+                          # Extract ScanId from LatestExecution
+                          SCAN_ID=$(echo "$RESPONSE" | sed -n 's/.*"ScanId":[[:space:]]*"\([^"]*\)".*/\1/p')
+
+                          if [ -z "$SCAN_ID" ] || [ -z "$EXECUTION_ID" ]; then
+                            echo "ERROR: Failed to extract IDs from response"
+                            echo "SCAN_ID: $SCAN_ID"
+                            echo "EXECUTION_ID: $EXECUTION_ID"
+                            exit 1
+                          fi
+
+                          export SCAN_ID
+                          export EXECUTION_ID
+                          echo "Successfully created DAST scan"
+                          echo "Scan ID: $SCAN_ID"
+                          echo "Execution ID: $EXECUTION_ID"
+                    environmentVariables: []
+                    outputVariables:
+                      - name: SCAN_ID
+                        type: String
+                        value: SCAN_ID
+                      - name: EXECUTION_ID
+                        type: String
+                        value: EXECUTION_ID
+                    delegateSelectors:
+                      - docker-delegate
+              - step:
+                  name: Poll DAST Status
+                  identifier: pollDastStatus
+                  type: ShellScript
+                  timeout: 65m
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "Polling DAST execution status..."
+
+                          EXECUTION_ID="<+execution.steps.createDastScan.output.outputVariables.EXECUTION_ID>"
+                          APPSCAN_TOKEN="<+execution.steps.appscanApiLogin.output.outputVariables.APPSCAN_TOKEN>"
+
+                          MAX_RETRIES=120
+                          RETRY_COUNT=0
+
+                          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            RESPONSE=$(curl -s -X 'GET' \
+                              "https://cloud.appscan.com/api/v4/Scans/DastExecution/${EXECUTION_ID}" \
+                              -H 'accept: application/json' \
+                              -H "Authorization: Bearer ${APPSCAN_TOKEN}")
+
+                            EXECUTION_STATUS=$(echo "$RESPONSE" | sed -n 's/.*"Status":[[:space:]]*"\([^"]*\)".*/\1/p')
+
+                            if [ -z "$EXECUTION_STATUS" ]; then
+                              echo "ERROR: Failed to extract execution status from response"
+                              echo "Response: $RESPONSE"
+                              exit 1
+                            fi
+
+                            echo "Iteration $((RETRY_COUNT+1))/$MAX_RETRIES: Status=$EXECUTION_STATUS"
+
+                            if [ "$EXECUTION_STATUS" = "Ready" ]; then
+                              echo "DAST scan completed successfully!"
+                              echo "Final Response: $RESPONSE"
+                              exit 0
+                            fi
+
+                            if [ "$EXECUTION_STATUS" = "Failed" ] || [ "$EXECUTION_STATUS" = "Error" ]; then
+                              echo "ERROR: DAST scan failed with status: $EXECUTION_STATUS"
+                              echo "Response: $RESPONSE"
+                              exit 1
+                            fi
+
+                            echo "Waiting 30 seconds before next check..."
+                            sleep 30
+                            RETRY_COUNT=$((RETRY_COUNT+1))
+                          done
+
+                          echo "ERROR: Timeout waiting for DAST scan to complete after $MAX_RETRIES attempts"
+                          exit 1
+                    environmentVariables: []
+                    outputVariables: []
+                    delegateSelectors:
+                      - docker-delegate
         tags: {}
         failureStrategies:
           - onFailure:
@@ -42,5 +290,3 @@ pipeline:
                 - AllErrors
               action:
                 type: StageRollback
-  identifier: altoroj_rolling_pipeline
-  name: altoroj_rolling_pipeline
