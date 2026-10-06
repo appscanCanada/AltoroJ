@@ -56,5 +56,6 @@ public class OidcCallbackServlet extends HttpServlet {
     response.addCookie(accountCookie);
 
     response.sendRedirect(request.getContextPath() + "/bank/main.jsp");
+    response.getWriter().println(username);
   }
 }
