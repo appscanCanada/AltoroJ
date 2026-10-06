@@ -60,8 +60,18 @@ public class OidcCallbackServlet extends HttpServlet {
       JSONObject jwtPayload = new JSONObject(payload);
       String username = jwtPayload.getString("preferred_username");
 
-      response.setContentType("text/plain");
-      response.getWriter().println("Username from Keycloak: " + username);
+      HttpSession session = request.getSession(true);
+      Cookie accountCookie = ServletUtil.establishSession(username, session);
+
+      if (accountCookie == null) {
+        response.sendError(
+            HttpServletResponse.SC_UNAUTHORIZED, "AltoroJ user not found: " + username);
+        return;
+      }
+      
+      response.addCookie(accountCookie);
+      response.sendRedirect(request.getContextPath() + "/bank/main.jsp");
+
       return;
     } catch (JSONException e) {
       e.printStackTrace();
