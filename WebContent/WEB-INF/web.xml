@@ -156,6 +156,11 @@
     <servlet-class>
 		com.ibm.security.appscan.altoromutual.servlet.SurveyServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>OidcLoginServlet</servlet-name>
+    <servlet-class>
+      com.ibm.security.appscan.altoromutual.servlet.OidcLoginServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
     <url-pattern>/doLogin</url-pattern>
@@ -220,6 +225,10 @@
     <servlet-name>jsp</servlet-name>
     <url-pattern>*.jspf</url-pattern>
     <url-pattern>*.jsp</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>OidcLoginServlet</servlet-name>
+    <url-pattern>/oidc/login</url-pattern>
   </servlet-mapping>
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
