@@ -50,12 +50,12 @@ public class OidcCallbackServlet extends HttpServlet {
     }
 
     JSONObject tokenResponse = new JSONObject(json.toString());
-      String idToken = tokenResponse.getString("id_token");
+    String idToken = tokenResponse.getString("id_token");
 
     String[] parts = idToken.split("\\.");
     String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]), "UTF-8");
     JSONObject jwtPayload = new JSONObject(payload);
-    String username = jwtPayload.getString("preferred_username");
+    String username = jwtPayload.getString("preferred_username");
 
     response.setContentType("text/plain");
     response.getWriter().println("Username from Keycloak: " + username);
