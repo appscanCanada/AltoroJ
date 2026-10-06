@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 
 public class OidcCallbackServlet extends HttpServlet {
@@ -50,16 +51,21 @@ public class OidcCallbackServlet extends HttpServlet {
       json.append(line);
     }
 
-    JSONObject tokenResponse = new JSONObject(json.toString());
-    String idToken = tokenResponse.getString("id_token");
+    try {
+      JSONObject tokenResponse = new JSONObject(json.toString());
+      String idToken = tokenResponse.getString("id_token");
 
-    String[] parts = idToken.split("\\.");
-    String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]), "UTF-8");
-    JSONObject jwtPayload = new JSONObject(payload);
-    String username = jwtPayload.getString("preferred_username");
+      String[] parts = idToken.split("\\.");
+      String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]), "UTF-8");
+      JSONObject jwtPayload = new JSONObject(payload);
+      String username = jwtPayload.getString("preferred_username");
 
-    response.setContentType("text/plain");
-    response.getWriter().println("Username from Keycloak: " + username);
-    return;
+      response.setContentType("text/plain");
+      response.getWriter().println("Username from Keycloak: " + username);
+      return;
+    } catch (JSONException e) {
+        e.printStackTrace();
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+    }
   }
 }
