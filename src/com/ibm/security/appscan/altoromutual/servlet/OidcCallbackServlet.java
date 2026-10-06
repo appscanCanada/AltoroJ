@@ -5,12 +5,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import com.ibm.security.appscan.altoromutual.util.ServletUtil;
 
 public class OidcCallbackServlet extends HttpServlet {
   @Override
@@ -45,7 +48,16 @@ public class OidcCallbackServlet extends HttpServlet {
       json.append(line);
     }
 
-    response.setContentType("application/json");
-    response.getWriter().print(json.toString());
+    HttpSession session = request.getSession(true);
+ 
+Cookie accountCookie =
+ServletUtil.establishSession(
+"jsmith",
+session);
+ 
+response.addCookie(accountCookie);
+ 
+response.sendRedirect(
+request.getContextPath() + "/bank/main.jsp");
   }
 }
