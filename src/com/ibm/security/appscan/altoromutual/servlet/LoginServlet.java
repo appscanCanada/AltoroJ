@@ -57,11 +57,17 @@ public class LoginServlet extends HttpServlet {
         idToken = (String) session.getAttribute("id_token");
         session.invalidate();
       }
-      String logoutUrl = "http://localhost:8085/realms/myrealm/protocol/openid-connect/logout"
-          + "?client_id=altoro"
-          + "&id_token_hint=" + URLEncoder.encode(idToken, "UTF-8") + "&post_logout_redirect_uri="
-          + URLEncoder.encode("http://localhost:8088/altoromutual/index.jsp", "UTF-8");
-
+      
+      String logoutUrl =
+        "http://localhost:8085/realms/myrealm/protocol/openid-connect/logout"
+        + "?client_id=altoro"
+        + "&id_token_hint="
+        + URLEncoder.encode(idToken, "UTF-8")
+        + "&post_logout_redirect_uri="
+        + URLEncoder.encode(
+          "http://localhost:8088/altoromutual/index.jsp",
+          "UTF-8");
+        
       response.sendRedirect(logoutUrl);
 
     } catch (Exception e) {
