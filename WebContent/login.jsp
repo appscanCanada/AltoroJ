@@ -10,17 +10,18 @@ technical environment in which the application is installed. You must delete and
 uninstall this demonstration application upon completion of the demonstration for
 which it is intended. 
 
-IBM DISCLAIMS ALL LIABILITY OF ANY KIND RESULTING FROM YOUR USE OF THE APPLICATION
+HCL SOFTWARE DISCLAIMS ALL LIABILITY OF ANY KIND RESULTING FROM YOUR USE OF THE APPLICATION
 OR YOUR FAILURE TO DELETE THE APPLICATION FROM YOUR ENVIRONMENT UPON COMPLETION OF
 A DEMONSTRATION. IT IS YOUR RESPONSIBILITY TO DETERMINE IF THE PROGRAM IS APPROPRIATE
 OR SAFE FOR YOUR TECHNICAL ENVIRONMENT. NEVER INSTALL THE APPLICATION IN A PRODUCTION
 ENVIRONMENT. YOU ACKNOWLEDGE AND ACCEPT ALL RISKS ASSOCIATED WITH THE USE OF THE APPLICATION.
 
-IBM AltoroJ
-(c) Copyright IBM Corp. 2008, 2013 All Rights Reserved.
+HCL SOFTWARE AltoroJ
+(c) Copyright HCL SOFTWARE 2026 All Rights Reserved.
 */
 %> 
-    
+
+<%/* this is all the old code, replaced by a simple redirect below
 <jsp:include page="header.jspf"/>
 
 <div id="wrapper" style="width: 99%;">
@@ -98,6 +99,13 @@ IBM AltoroJ
 			}
 			window.onload = setfocus;
 		</script>
+		/*%>
+		<%
+			// redirect to the keycloak login
+			response.sendRedirect(
+			request.getContextPath() + "/oidc/login");
+			return;
+		%>
     </td>
 </div>
 
