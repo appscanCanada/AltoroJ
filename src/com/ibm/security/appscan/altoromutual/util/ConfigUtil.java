@@ -8,15 +8,15 @@ public class ConfigUtil {
 
   static {
     try {
-      InputStream in = ConfigUtil.class.getClassLoader().getResourceAsStream("app.properties");
+      InputStream in = ConfigUtil.class.getClassLoader().getResourceAsStream("keycloak.properties");
       if (in == null) {
-        throw new RuntimeException("Could not find app.properties");
+        throw new RuntimeException("Could not find keycloak.properties");
       }
 
       props.load(in);
 
     } catch (Exception e) {
-      throw new RuntimeException("Unable to load app.properties", e);
+      throw new RuntimeException("Unable to load keycloak.properties", e);
     }
   }
 
