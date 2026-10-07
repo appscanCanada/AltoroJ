@@ -2,7 +2,7 @@ package com.ibm.security.appscan.altoromutual.servlet;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-
+import com.ibm.security.appscan.altoromutual.util.ConfigUtil;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
