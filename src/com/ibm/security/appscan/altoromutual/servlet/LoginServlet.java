@@ -59,16 +59,18 @@ public class LoginServlet extends HttpServlet {
       }
       
       String logoutUrl =
-        "http://localhost:8085/realms/myrealm/protocol/openid-connect/logout"
-        + "?client_id=altoro"
+        ConfigUtil.get("keycloak.url")
+        + "/realms/"
+        + ConfigUtil.get("keycloak.realm")
+        + "/protocol/openid-connect/logout"
+        + "?client_id="
+        + ConfigUtil.get("keycloak.clientId")
         + "&id_token_hint="
         + URLEncoder.encode(idToken, "UTF-8")
         + "&post_logout_redirect_uri="
-        + URLEncoder.encode(
-          "http://localhost:8088/altoromutual/index.jsp",
-          "UTF-8");
+        + URLEncoder.encode(ConfigUtil.get("keycloak.postLogoutRedirectUri"),"UTF-8");
         
-      response.sendRedirect(logoutUrl);
+        response.sendRedirect(logoutUrl);
 
     } catch (Exception e) {
       // ignore
