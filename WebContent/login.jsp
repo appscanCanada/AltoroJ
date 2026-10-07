@@ -108,5 +108,3 @@ HCL SOFTWARE AltoroJ
 		%>
     </td>
 </div>
-
-<jsp:include page="footer.jspf"/>
