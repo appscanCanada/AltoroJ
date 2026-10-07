@@ -24,13 +24,19 @@ public class OidcCallbackServlet extends HttpServlet {
     String code = request.getParameter("code");
 
     String form = "grant_type=authorization_code"
-        + "&client_id=altoro"
+        + "&client_id=" + ConfigUtil.get("keycloak.clientId")
         + "&client_secret="
-        + "ZFjUh4SGWLBj7OzuTb6H2ZrM9U3P9492JcloaoFvvSNIlfmRyQT3oTpLw5bbrj8XTmnVkx6Vywh1E09gErNByO"
+        + ConfigUtil.get("keycloak.clientSecret")
         + "&code=" + URLEncoder.encode(code, "UTF-8") + "&redirect_uri="
-        + URLEncoder.encode("http://localhost:8088/altoromutual/oidc/callback", "UTF-8");
+        + URLEncoder.encode(ConfigUtil.get("keycloak.redirectUri"), "UTF-8");
 
-    URL url = new URL("http://localhost:8085/realms/myrealm/protocol/openid-connect/token");
+    String tokenEndpoint =
+      ConfigUtil.get("keycloak.url")
+      + "/realms/"
+      + ConfigUtil.get("keycloak.realm")
+      + "/protocol/openid-connect/token";
+
+    URL url = new URL(tokenEndpoint);
 
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
