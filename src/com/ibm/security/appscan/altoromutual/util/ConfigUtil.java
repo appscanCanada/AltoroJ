@@ -11,7 +11,7 @@ public class ConfigUtil {
         try {
             InputStream in =
                 ConfigUtil.class.getClassLoader()
-                    .getResourceAsStream("app.properties");
+                    .getResourceAsStream("/WEB-INF/app.properties");
 
             props.load(in);
 
