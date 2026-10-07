@@ -21,13 +21,13 @@ import com.ibm.security.appscan.Log4AltoroJ;
 import com.ibm.security.appscan.altoromutual.util.DBUtil;
 import com.ibm.security.appscan.altoromutual.util.ServletUtil;
 import java.io.IOException;
+import java.net.URLEncoder;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.net.URLEncoder;
 
 /**
  * This servlet processes user's login and logout operations
@@ -54,25 +54,19 @@ public class LoginServlet extends HttpServlet {
       String idToken = null;
 
       if (session != null) {
-        idToken = (String)session.getAttribute("id_token");
+        idToken = (String) session.getAttribute("id_token");
         session.invalidate();
       }
+      String logoutUrl = "http://localhost:8085/realms/myrealm/protocol/openid-connect/logout"
+          + "?client_id=altoro"
+          + "&id_token_hint=" + URLEncoder.encode(idToken, "UTF-8") + "&post_logout_redirect_uri="
+          + URLEncoder.encode("http://localhost:8088/altoromutual/index.jsp", "UTF-8");
+
+      response.sendRedirect(logoutUrl);
 
     } catch (Exception e) {
       // ignore
     }
-
-    String logoutUrl =
-      "http://localhost:8085/realms/myrealm/protocol/openid-connect/logout"
-      + "?client_id=altoro"
-      + "&id_token_hint="
-      + URLEncoder.encode(idToken, "UTF-8")
-      + "&post_logout_redirect_uri="
-      + URLEncoder.encode(
-          "http://localhost:8088/altoromutual/index.jsp",
-          "UTF-8");
-        
-    response.sendRedirect(logoutUrl);
   }
 
   /**
@@ -99,7 +93,7 @@ public class LoginServlet extends HttpServlet {
         Log4AltoroJ.getInstance().logError(
             "Login failed >>> User: " + username + " >>> Password: " + password);
         throw new Exception("Login Failed: We're sorry, but this username or password was not "
-                            + "found in our system. Please try again.");
+            + "found in our system. Please try again.");
       }
     } catch (Exception ex) {
       request.getSession(true).setAttribute("loginError", ex.getLocalizedMessage());
