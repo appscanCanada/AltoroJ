@@ -99,7 +99,7 @@ HCL SOFTWARE AltoroJ
 			}
 			window.onload = setfocus;
 		</script>
-		/*%>
+		*/%>
 		<%
 			// redirect to the keycloak login
 			response.sendRedirect(
