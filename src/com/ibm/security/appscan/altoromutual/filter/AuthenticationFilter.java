@@ -7,6 +7,11 @@ import javax.servlet.http.*;
 
 public class AuthenticationFilter implements Filter {
   @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+    // Nothing to initialize
+  }
+  
+  @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
       throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
