@@ -61,6 +61,7 @@ public class OidcCallbackServlet extends HttpServlet {
       String username = jwtPayload.getString("preferred_username");
 
       HttpSession session = request.getSession(true);
+      session.setAttribute("id_token", idToken);
       Cookie accountCookie = ServletUtil.establishSession(username, session);
 
       if (accountCookie == null) {
