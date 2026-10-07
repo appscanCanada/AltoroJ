@@ -21,7 +21,7 @@ HCL SOFTWARE AltoroJ
 */
 %> 
 
-<%/* this is all the old code, replaced by a simple redirect below
+<%-- this is all the old code, replaced by a simple redirect below
 <jsp:include page="header.jspf"/>
 
 <div id="wrapper" style="width: 99%;">
@@ -99,7 +99,7 @@ HCL SOFTWARE AltoroJ
 			}
 			window.onload = setfocus;
 		</script>
-		*/%>
+		--%>
 		<%
 			// redirect to the keycloak login
 			response.sendRedirect(
