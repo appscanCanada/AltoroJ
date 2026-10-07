@@ -1,6 +1,7 @@
 package com.ibm.security.appscan.altoromutual.servlet;
 
 import com.ibm.security.appscan.altoromutual.util.ServletUtil;
+import com.ibm.security.appscan.altoromutual.util.ConfigUtil;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
