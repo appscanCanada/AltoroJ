@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import com.ibm.security.appscan.altoromutual.util.ConfigUtil;
 
 /**
  * This servlet processes user's login and logout operations
