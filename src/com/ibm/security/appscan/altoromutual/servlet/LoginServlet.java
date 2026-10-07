@@ -64,7 +64,8 @@ public class LoginServlet extends HttpServlet {
 
     String logoutUrl =
       "http://localhost:8085/realms/myrealm/protocol/openid-connect/logout"
-      + "?id_token_hint="
+      + "?client_id=altoro"
+      + "&id_token_hint="
       + URLEncoder.encode(idToken, "UTF-8")
       + "&post_logout_redirect_uri="
       + URLEncoder.encode(
