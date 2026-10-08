@@ -1,7 +1,7 @@
 package com.ibm.security.appscan.altoromutual.servlet;
 
-import com.ibm.security.appscan.altoromutual.util.ServletUtil;
 import com.ibm.security.appscan.altoromutual.util.ConfigUtil;
+import com.ibm.security.appscan.altoromutual.util.ServletUtil;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,17 +25,12 @@ public class OidcCallbackServlet extends HttpServlet {
     String code = request.getParameter("code");
 
     String form = "grant_type=authorization_code"
-        + "&client_id=" + ConfigUtil.get("keycloak.clientId")
-        + "&client_secret="
-        + ConfigUtil.getClientSecret()
-        + "&code=" + URLEncoder.encode(code, "UTF-8") + "&redirect_uri="
-        + URLEncoder.encode(ConfigUtil.get("keycloak.redirectUri"), "UTF-8");
+        + "&client_id=" + ConfigUtil.get("keycloak.clientId") + "&client_secret="
+        + ConfigUtil.getClientSecret() + "&code=" + URLEncoder.encode(code, "UTF-8")
+        + "&redirect_uri=" + URLEncoder.encode(ConfigUtil.get("keycloak.redirectUri"), "UTF-8");
 
-    String tokenEndpoint =
-      ConfigUtil.get("keycloak.url")
-      + "/realms/"
-      + ConfigUtil.get("keycloak.realm")
-      + "/protocol/openid-connect/token";
+    String tokenEndpoint = ConfigUtil.get("keycloak.url") + "/realms/"
+        + ConfigUtil.get("keycloak.realm") + "/protocol/openid-connect/token";
 
     URL url = new URL(tokenEndpoint);
 
@@ -72,12 +67,15 @@ public class OidcCallbackServlet extends HttpServlet {
       Cookie accountCookie = ServletUtil.establishSession(username, session);
 
       if (accountCookie == null) {
-        response.sendError(
-            HttpServletResponse.SC_UNAUTHORIZED, "AltoroJ user not found: " + username);
+        request.setAttribute("username", username);
+
+        request.getRequestDispatcher("/userNotFound.jsp").forward(request, response);
+
         return;
       }
-      
+
       response.addCookie(accountCookie);
+
       response.sendRedirect(request.getContextPath() + "/bank/main.jsp");
 
       return;
