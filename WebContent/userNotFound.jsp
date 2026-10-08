@@ -12,10 +12,10 @@
 
         <p style="color:red;font-weight:bold;">
             Keycloak authentication succeeded, but the user
-            <b><%= request.getAttribute("username") %></b>
+            <b><%= <%= request.getParameter("user") %> %></b>
             is not in the AltoroJ database.
-        </b>
-        </b>
+        <br>
+        <br>
             Please contact your AltoroJ administrator.
         </p>
     </div>
