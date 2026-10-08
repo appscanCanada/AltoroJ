@@ -53,6 +53,12 @@ public class LoginServlet extends HttpServlet {
     try {
       HttpSession session = request.getSession(false);
       String idToken = null;
+      String username = request.getParameter("user");
+
+      if ("userNotFound".equals(reason)) {
+        postLogoutUrl = "http://localhost:8088/altoromutual/userNotFound.jsp"
+            + "?user=" + URLEncoder.encode(username, "UTF-8");
+      }
 
       if (session != null) {
         idToken = (String) session.getAttribute("id_token");
