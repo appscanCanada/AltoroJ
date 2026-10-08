@@ -68,7 +68,14 @@ public class OidcCallbackServlet extends HttpServlet {
 
       if (accountCookie == null) {
         session.setAttribute("userNotFound", username);
-        response.sendRedirect(request.getContextPath() + "/logout.jsp?reason=userNotFound");
+        response.sendRedirect(
+          request.getContextPath()
+            + "/logout.jsp?reason=userNotFound"
+            + "&user="
+            + URLEncoder.encode(
+                username,
+                "UTF-8")
+        );
         return;
       }
       
