@@ -29,6 +29,12 @@ Main usernames and passwords for AltoroJ are as follows:
 - jsmith/demo1234
 - admin/admin
 
+## Keycloak Authentication
+This project includes an OpenID Connect (OIDC) integration with Keycloak 26.8.0.
+
+For setup and configuration instructions, see:
+
+- [Keycloak Integration Guide](docs/keycloak-integration.md)
 
 # Advanced options
 AltoroJ’s original design goals were to create an application that is easy to deploy, very stable and less dangerous (as far as vulnerable web apps go). However, these goals meant that certain attacks couldn’t be a part of it. Because of this, there are advanced user-configurable properties that can enable AltoroJ behaviors which are disabled by default.These enable extra functionality, new cool attacks and demos as well as optional behaviors.
