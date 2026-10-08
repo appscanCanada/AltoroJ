@@ -14,9 +14,8 @@
             Keycloak authentication succeeded, but the user
             <b><%= request.getAttribute("username") %></b>
             is not in the AltoroJ database.
-        </p>
-
-        <p>
+        </b>
+        </b>
             Please contact your AltoroJ administrator.
         </p>
     </div>
