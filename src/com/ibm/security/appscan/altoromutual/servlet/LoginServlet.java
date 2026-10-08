@@ -52,28 +52,27 @@ public class LoginServlet extends HttpServlet {
       throws ServletException, IOException {
     try {
       HttpSession session = request.getSession(false);
+
       String idToken = null;
-      String username = request.getParameter("user");
-
-      if ("userNotFound".equals(reason)) {
-        postLogoutUrl = "http://localhost:8088/altoromutual/userNotFound.jsp"
-            + "?user=" + URLEncoder.encode(username, "UTF-8");
-      }
-
-      if (session != null) {
-        idToken = (String) session.getAttribute("id_token");
-        session.invalidate();
-      }
 
       String reason = request.getParameter("reason");
+
+      String username = request.getParameter("user");
 
       String postLogoutUrl;
 
       if ("userNotFound".equals(reason)) {
-        postLogoutUrl = "http://localhost:8088/altoromutual/userNotFound.jsp";
+        postLogoutUrl = "http://localhost:8088/altoromutual/userNotFound.jsp"
+            + "?user=" + URLEncoder.encode(username, "UTF-8");
 
       } else {
         postLogoutUrl = ConfigUtil.get("keycloak.postLogoutRedirectUri");
+      }
+
+      if (session != null) {
+        idToken = (String) session.getAttribute("id_token");
+
+        session.invalidate();
       }
 
       String logoutUrl = ConfigUtil.get("keycloak.url") + "/realms/"
@@ -85,7 +84,8 @@ public class LoginServlet extends HttpServlet {
       response.sendRedirect(logoutUrl);
 
     } catch (Exception e) {
-      // ignore
+      e.printStackTrace();
+      throw new ServletException(e);
     }
   }
 
