@@ -18,6 +18,7 @@ IBM AltoroJ
 package com.ibm.security.appscan.altoromutual.servlet;
 
 import com.ibm.security.appscan.Log4AltoroJ;
+import com.ibm.security.appscan.altoromutual.util.ConfigUtil;
 import com.ibm.security.appscan.altoromutual.util.DBUtil;
 import com.ibm.security.appscan.altoromutual.util.ServletUtil;
 import java.io.IOException;
@@ -28,7 +29,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import com.ibm.security.appscan.altoromutual.util.ConfigUtil;
 
 /**
  * This servlet processes user's login and logout operations
@@ -58,20 +58,25 @@ public class LoginServlet extends HttpServlet {
         idToken = (String) session.getAttribute("id_token");
         session.invalidate();
       }
-      
-      String logoutUrl =
-        ConfigUtil.get("keycloak.url")
-        + "/realms/"
-        + ConfigUtil.get("keycloak.realm")
-        + "/protocol/openid-connect/logout"
-        + "?client_id="
-        + ConfigUtil.get("keycloak.clientId")
-        + "&id_token_hint="
-        + URLEncoder.encode(idToken, "UTF-8")
-        + "&post_logout_redirect_uri="
-        + URLEncoder.encode(ConfigUtil.get("keycloak.postLogoutRedirectUri"),"UTF-8");
-        
-        response.sendRedirect(logoutUrl);
+
+      String reason = request.getParameter("reason");
+
+      String postLogoutUrl;
+
+      if ("userNotFound".equals(reason)) {
+        postLogoutUrl = "http://localhost:8088/altoromutual/userNotFound.jsp";
+
+      } else {
+        postLogoutUrl = ConfigUtil.get("keycloak.postLogoutRedirectUri");
+      }
+
+      String logoutUrl = ConfigUtil.get("keycloak.url") + "/realms/"
+          + ConfigUtil.get("keycloak.realm") + "/protocol/openid-connect/logout"
+          + "?client_id=" + ConfigUtil.get("keycloak.clientId")
+          + "&id_token_hint=" + URLEncoder.encode(idToken, "UTF-8")
+          + "&post_logout_redirect_uri=" + URLEncoder.encode(postLogoutUrl, "UTF-8");
+
+      response.sendRedirect(logoutUrl);
 
     } catch (Exception e) {
       // ignore
