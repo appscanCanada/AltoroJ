@@ -27,7 +27,7 @@ public class OidcCallbackServlet extends HttpServlet {
     String form = "grant_type=authorization_code"
         + "&client_id=" + ConfigUtil.get("keycloak.clientId")
         + "&client_secret="
-        + ConfigUtil.get("keycloak.clientSecret")
+        + ConfigUtil.getClientSecret()
         + "&code=" + URLEncoder.encode(code, "UTF-8") + "&redirect_uri="
         + URLEncoder.encode(ConfigUtil.get("keycloak.redirectUri"), "UTF-8");
 
