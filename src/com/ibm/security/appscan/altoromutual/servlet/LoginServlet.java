@@ -80,7 +80,7 @@ public class LoginServlet extends HttpServlet {
           + "?client_id=" + ConfigUtil.get("keycloak.clientId")
           + "&id_token_hint=" + URLEncoder.encode(idToken, "UTF-8")
           + "&post_logout_redirect_uri=" + URLEncoder.encode(postLogoutUrl, "UTF-8");
-
+      System.out.println("logoutUrl = " + logoutUrl);
       response.sendRedirect(logoutUrl);
 
     } catch (Exception e) {
