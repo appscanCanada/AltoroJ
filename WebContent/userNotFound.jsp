@@ -1,0 +1,23 @@
+<%@ page language="java"
+    contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+
+<jsp:include page="header.jspf"/>
+
+<div id="wrapper" style="width:99%;">
+    <jsp:include page="/toc.jspf"/>
+
+    <div class="fl" style="width:99%;">
+        <h1>Access Denied</h1>
+
+        <p style="color:red;font-weight:bold;">
+            The user
+            <b><%= request.getAttribute("username") %></b>
+            is not in the AltoroJ database.
+        </p>
+
+        <p>
+            Please contact your AltoroJ administrator.
+        </p>
+    </div>
+</div>
