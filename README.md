@@ -29,7 +29,7 @@ Main usernames and passwords for AltoroJ are as follows:
 - jsmith/demo1234
 - admin/admin
 
-## Keycloak Authentication
+# Keycloak Authentication
 This project includes an OpenID Connect (OIDC) integration with Keycloak 26.8.0.
 
 For setup and configuration instructions, see:
