@@ -67,18 +67,15 @@ public class OidcCallbackServlet extends HttpServlet {
       Cookie accountCookie = ServletUtil.establishSession(username, session);
 
       if (accountCookie == null) {
-        request.setAttribute("username", username);
-
-        request.getRequestDispatcher("/userNotFound.jsp").forward(request, response);
-
+        session.setAttribute("userNotFound", username);
+        response.sendRedirect(request.getContextPath() + "/logout.jsp?reason=userNotFound");
         return;
       }
-
+      
       response.addCookie(accountCookie);
-
       response.sendRedirect(request.getContextPath() + "/bank/main.jsp");
-
       return;
+      
     } catch (JSONException e) {
       e.printStackTrace();
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
