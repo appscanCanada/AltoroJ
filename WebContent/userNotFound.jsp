@@ -12,7 +12,7 @@
 
         <p style="color:red;font-weight:bold;">
             Keycloak authentication succeeded, but the user
-            <b><%= <%= request.getParameter("user") %> %></b>
+            <b><%= request.getParameter("user") %></b>
             is not in the AltoroJ database.
         <br>
         <br>
