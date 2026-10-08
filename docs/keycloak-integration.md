@@ -1,9 +1,9 @@
-AltoroJ Keycloak Integration
-Overview
+#AltoroJ Keycloak Integration
+##Overview
 
 This document describes the integration of IBM AltoroJ with Keycloak 26.8.0 using OpenID Connect (OIDC). Authentication is delegated entirely to Keycloak, while AltoroJ continues to manage customer accounts, balances, and banking functionality. The integration uses the OIDC Authorization Code Flow and maps authenticated Keycloak users directly to existing AltoroJ users.
 
-Architecture
+##Architecture
 User
   ↓
 Keycloak Login
@@ -18,12 +18,13 @@ AltoroJ Session
   ↓
 /bank/*
 
-Authentication Responsibilities
+##Authentication Responsibilities
 Component	ResponsibilityKeycloak	Authentication
 AltoroJ Database	User Account Data
 OidcCallbackServlet	User Mapping
 ServletUtil.establishSession()	AltoroJ Session Creation
-Prerequisites
+
+##Prerequisites
 Java 7
 Apache Tomcat
 AltoroJ
@@ -31,37 +32,31 @@ Keycloak 26.8.0
 OpenID Connect (OIDC)
 Keycloak Installation
 
-Keycloak was installed using the ZIP distribution and started in development mode.
-
-Windows
+##Keycloak was installed using the ZIP distribution and started in development mode.
+##Windows
 bin\kc.bat start-dev
-
 
 The deployment followed the official Keycloak Getting Started guide.
 
-Keycloak Configuration
+##Keycloak Configuration
 Create Realm
 
 Create a realm named:
 
 myrealm
 
-
 Realms provide isolated management boundaries for users, clients, and applications.
 
 Create Users
 
-Create users that correspond to users that already exist in the AltoroJ database.
-
-Example:
-
+Create users that correspond to users that already exist in the AltoroJ database:
 jsmith
 admin
 
 
 Additional users may be added as needed.
 
-Create OIDC Client
+##Create OIDC Client
 
 Create an OpenID Connect client:
 
@@ -78,10 +73,11 @@ Login Redirect URI
 http://localhost:8088/altoromutual/oidc/callback
 
 Post Logout Redirect URI
-http://localhost:8088/altoromutual/index.jsp
+http://localhost:8088/altoromutual/index.jsp*
+http://localhost:8088/altoromutual/userNotFound.jsp*
 
-AltoroJ Changes
-New Components
+#AltoroJ Changes
+##New Components
 OidcLoginServlet
 
 Initiates OIDC authentication.
@@ -115,7 +111,7 @@ userNotFound.jsp
 
 Provides friendly error handling when a valid Keycloak user does not exist in the AltoroJ database.
 
-Login Flow
+##Login Flow
 Original AltoroJ Login
 login.jsp
     ↓
@@ -140,7 +136,7 @@ ServletUtil.establishSession()
     ↓
 AltoroJ Session
 
-Login Page Modification
+##Login Page Modification
 
 The original login.jsp was modified to immediately redirect users into the Keycloak authentication flow.
 
@@ -150,7 +146,7 @@ response.sendRedirect(
 return;
 %>
 
-User Mapping
+##User Mapping
 
 Authentication is performed by Keycloak.
 
@@ -222,11 +218,9 @@ User must authenticate again
 
 No active Keycloak SSO session remains.
 
-Configuration
+##Configuration
 keycloak.properties
-
 Location:
-
 src/keycloak.properties
 
 
@@ -238,17 +232,16 @@ keycloak.clientId=altoro
 keycloak.redirectUri=http://localhost:8088/altoromutual/oidc/callback
 keycloak.postLogoutRedirectUri=http://localhost:8088/altoromutual/index.jsp
 
-Environment Variable
+##Environment Variable
 
 The Keycloak client secret is intentionally excluded from source control.
-
 Windows
 setx KEYCLOAK_CLIENT_SECRET "<client-secret>"
 
 Usage
 System.getenv("KEYCLOAK_CLIENT_SECRET")
 
-Files Modified
+##Files Modified
 WebContent/login.jsp
 
 WebContent/userNotFound.jsp
@@ -274,7 +267,6 @@ Authenticated
 Redirected to bank/main.jsp
 
 Admin User
-User
 admin
 
 Expected Result
@@ -298,7 +290,7 @@ AltoroJ logout succeeds
 Keycloak logout succeeds
 User redirected to index.jsp
 
-Summary
+#Summary
 
 This integration modernizes AltoroJ authentication by delegating identity management to Keycloak while preserving the existing AltoroJ account and banking model.
 
