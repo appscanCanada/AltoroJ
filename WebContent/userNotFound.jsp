@@ -11,7 +11,7 @@
         <h1>Access Denied</h1>
 
         <p style="color:red;font-weight:bold;">
-            The user
+            Keycloak authentication succeeded, but the user
             <b><%= request.getAttribute("username") %></b>
             is not in the AltoroJ database.
         </p>
