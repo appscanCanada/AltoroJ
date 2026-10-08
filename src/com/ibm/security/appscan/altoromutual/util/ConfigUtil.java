@@ -23,4 +23,14 @@ public class ConfigUtil {
   public static String get(String key) {
     return props.getProperty(key);
   }
+
+  public static String getClientSecret() {
+    String secret =
+        System.getenv("KEYCLOAK_CLIENT_SECRET");
+    if (secret == null || secret.trim().isEmpty()) {
+        throw new RuntimeException(
+            "KEYCLOAK_CLIENT_SECRET not set");
+    }
+    return secret;
+}
 }
