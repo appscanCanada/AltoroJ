@@ -51,6 +51,7 @@ public class OidcCallbackServlet extends HttpServlet {
     conn.setRequestMethod("POST");
     conn.setDoOutput(true);
     conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+    conn.setRequestProperty("DPoP", dpopProof);
 
     try (OutputStream os = conn.getOutputStream()) {
       os.write(form.getBytes("UTF-8"));
