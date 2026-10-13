@@ -4,6 +4,7 @@ import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
+import javax.servlet.ServletException;
 
 public class DpopAuthenticationFilter
     implements Filter {
