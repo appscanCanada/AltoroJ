@@ -1,6 +1,8 @@
 package com.ibm.security.appscan.altoromutual.filter;
 
 import javax.servlet.Filter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 public class DpopAuthenticationFilter
     implements Filter {
