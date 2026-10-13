@@ -40,6 +40,10 @@ public class OidcCallbackServlet extends HttpServlet {
     String tokenEndpoint = ConfigUtil.get("keycloak.url") + "/realms/"
         + ConfigUtil.get("keycloak.realm") + "/protocol/openid-connect/token";
 
+    String dpopProof = createDpopProof(tokenEndpoint);
+
+    System.out.println("Generated DPoP proof");
+
     URL url = new URL(tokenEndpoint);
 
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
