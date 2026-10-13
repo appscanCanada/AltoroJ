@@ -45,6 +45,11 @@ public class OidcCallbackServlet extends HttpServlet {
     }
 
     int responseCode = conn.getResponseCode();
+    System.out.println("Response Headers:");
+    for (java.util.Map.Entry<String, java.util.List<String>> header :
+        conn.getHeaderFields().entrySet()) {
+      System.out.println(header.getKey() + " = " + header.getValue());
+    }
     System.out.println("Token endpoint HTTP response code: " + responseCode);
 
     if (responseCode != 200) {
