@@ -1,3 +1,5 @@
+package com.ibm.security.appscan.altoromutual.filter;
+
 public class DpopAuthenticationFilter
     implements Filter {
 
