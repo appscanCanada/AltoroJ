@@ -44,23 +44,6 @@ public class OidcCallbackServlet extends HttpServlet {
       os.write(form.getBytes("UTF-8"));
     }
 
-    int responseCode = conn.getResponseCode();
-    System.out.println("Token endpoint HTTP response code: " + responseCode);
-
-    if (responseCode != 200) {
-      System.out.println("Token endpoint returned error");
-
-      BufferedReader err = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-
-      String errLine;
-
-      while ((errLine = err.readLine()) != null) {
-        System.out.println(errLine);
-      }
-
-      throw new RuntimeException("Token request failed");
-    }
-
     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
     String line;
@@ -85,15 +68,21 @@ public class OidcCallbackServlet extends HttpServlet {
 
       if (accountCookie == null) {
         session.setAttribute("userNotFound", username);
-        response.sendRedirect(request.getContextPath() + "/logout.jsp?reason=userNotFound"
-            + "&user=" + URLEncoder.encode(username, "UTF-8"));
+        response.sendRedirect(
+          request.getContextPath()
+            + "/logout.jsp?reason=userNotFound"
+            + "&user="
+            + URLEncoder.encode(
+                username,
+                "UTF-8")
+        );
         return;
       }
-
+      
       response.addCookie(accountCookie);
       response.sendRedirect(request.getContextPath() + "/bank/main.jsp");
       return;
-
+      
     } catch (JSONException e) {
       e.printStackTrace();
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
