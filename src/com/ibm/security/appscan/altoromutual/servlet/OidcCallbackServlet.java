@@ -120,41 +120,39 @@ public class OidcCallbackServlet extends HttpServlet {
       e.printStackTrace();
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
     }
+  }
+  private String createDpopProof(String tokenEndpoint) throws Exception {
+    KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
 
-    private String createDpopProof(String tokenEndpoint) throws Exception {
-      KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
+    kpg.initialize(256);
 
-      kpg.initialize(256);
+    KeyPair keyPair = kpg.generateKeyPair();
 
-      KeyPair keyPair = kpg.generateKeyPair();
+    PublicJsonWebKey jwk = PublicJsonWebKey.Factory.newPublicJwk((ECPublicKey) keyPair.getPublic());
 
-      PublicJsonWebKey jwk =
-          PublicJsonWebKey.Factory.newPublicJwk((ECPublicKey) keyPair.getPublic());
+    JwtClaims claims = new JwtClaims();
 
-      JwtClaims claims = new JwtClaims();
+    claims.setGeneratedJwtId();
 
-      claims.setGeneratedJwtId();
+    claims.setIssuedAtToNow();
 
-      claims.setIssuedAtToNow();
+    claims.setClaim("htm", "POST");
 
-      claims.setClaim("htm", "POST");
+    claims.setClaim("htu", tokenEndpoint);
 
-      claims.setClaim("htu", tokenEndpoint);
+    JsonWebSignature jws = new JsonWebSignature();
 
-      JsonWebSignature jws = new JsonWebSignature();
+    jws.setPayload(claims.toJson());
 
-      jws.setPayload(claims.toJson());
+    jws.setKey(keyPair.getPrivate());
 
-      jws.setKey(keyPair.getPrivate());
+    jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256);
 
-      jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256);
+    jws.setHeader("typ", "dpop+jwt");
 
-      jws.setHeader("typ", "dpop+jwt");
+    jws.getHeaders().setObjectHeaderValue(
+        "jwk", jwk.toParams(PublicJsonWebKey.OutputControlLevel.PUBLIC_ONLY));
 
-      jws.getHeaders().setObjectHeaderValue(
-          "jwk", jwk.toParams(PublicJsonWebKey.OutputControlLevel.PUBLIC_ONLY));
-
-      return jws.getCompactSerialization();
-    }
+    return jws.getCompactSerialization();
   }
 }
