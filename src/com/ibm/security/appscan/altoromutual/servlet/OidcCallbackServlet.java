@@ -45,6 +45,9 @@ public class OidcCallbackServlet extends HttpServlet {
     }
 
     int responseCode = conn.getResponseCode();
+
+    StringBuilder errorBody = new StringBuilder();
+
     System.out.println("Response Headers:");
     for (java.util.Map.Entry<String, java.util.List<String>> header :
         conn.getHeaderFields().entrySet()) {
@@ -63,7 +66,8 @@ public class OidcCallbackServlet extends HttpServlet {
         System.out.println(errLine);
       }
 
-      throw new RuntimeException("Token request failed");
+      throw new RuntimeException(
+          "Token request failed. HTTP=" + responseCode + " BODY=" + errorBody.toString());
     }
 
     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
