@@ -47,7 +47,7 @@ public class AuthFilter implements Filter {
             String authorization = request.getHeader("Authorization");
             String dpop = request.getHeader("DPoP");
 
-            // temp debug code
+            /* temp debug code
             javax.servlet.http.HttpSession session = request.getSession(false);
 
             String sessionId = session == null ? "null" : session.getId();
@@ -61,8 +61,8 @@ public class AuthFilter implements Filter {
             );
 
             return;
-            // temp debug code end
-            /*
+            temp debug code end */
+            
             if (user == null || !(user instanceof User)) {
                 ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
 
@@ -80,7 +80,6 @@ public class AuthFilter implements Filter {
                 return;
             }
             chain.doFilter(req, resp);
-            */
         }
     }
 
