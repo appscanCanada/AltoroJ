@@ -101,6 +101,7 @@ public class OidcCallbackServlet extends HttpServlet {
     try {
       JSONObject tokenResponse = new JSONObject(json.toString());
       String idToken = tokenResponse.getString("id_token");
+      String accessToken = tokenResponse.getString("accessToken");
 
       String[] parts = idToken.split("\\.");
       String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]), "UTF-8");
