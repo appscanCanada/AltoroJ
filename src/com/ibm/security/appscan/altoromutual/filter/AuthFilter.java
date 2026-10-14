@@ -65,6 +65,7 @@ public class AuthFilter implements Filter {
             "] USER=[" + user2 + "]");
 
         return;
+    }
         //temp debug code end
       if (user == null || !(user instanceof User)) {
         ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
