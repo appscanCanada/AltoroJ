@@ -41,14 +41,13 @@ public class AuthFilter implements Filter {
       HttpServletRequest request = (HttpServletRequest) req;
 
       Object user = request.getSession().getAttribute(ServletUtil.SESSION_ATTR_USER);
+      javax.servlet.http.HttpSession session = request.getSession(false);
       String authorization = request.getHeader("Authorization");
       String dpop = request.getHeader("DPoP");
 
       String presentedToken = authorization.substring("DPoP ".length());
       String sessionToken =
           (session == null) ? null : (String) session.getAttribute("access_token");
-
-      javax.servlet.http.HttpSession session = request.getSession(false);
 
       if (user == null || !(user instanceof User)) {
         ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
