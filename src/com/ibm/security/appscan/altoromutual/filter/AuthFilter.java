@@ -45,13 +45,8 @@ public class AuthFilter implements Filter {
       String dpop = request.getHeader("DPoP");
 
       String presentedToken = authorization.substring("DPoP ".length());
-      String sessionToken = (String) session.getAttribute("access_token");
-
-      if (!sessionToken.equals(presentedToken)) {
-        ((HttpServletResponse) resp).sendError(401, "Invalid access token");
-
-        return;
-      }
+      String sessionToken =
+          (session == null) ? null : (String) session.getAttribute("access_token");
 
       javax.servlet.http.HttpSession session = request.getSession(false);
 
@@ -71,6 +66,12 @@ public class AuthFilter implements Filter {
 
         return;
       }
+
+      if (sessionToken == null || !sessionToken.equals(presentedToken)) {
+        ((HttpServletResponse) resp).sendError(401, "Invalid access token");
+        return;
+      }
+
       chain.doFilter(req, resp);
     }
   }
