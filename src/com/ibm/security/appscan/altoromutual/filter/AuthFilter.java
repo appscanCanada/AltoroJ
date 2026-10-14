@@ -49,8 +49,8 @@ public class AuthFilter implements Filter {
         "AUTH=[" + authorization +
         "] DPOP=[" + dpop + "]");
 
-return;
-
+      return;
+/*
       if (user == null || !(user instanceof User)) {
         ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
         return;
@@ -66,7 +66,7 @@ return;
 
         return;
       }
-      chain.doFilter(req, resp);
+      chain.doFilter(req, resp); */
     }
   }
 
