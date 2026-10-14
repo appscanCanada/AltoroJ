@@ -44,7 +44,7 @@ public class AuthFilter implements Filter {
       javax.servlet.http.HttpSession session = request.getSession(false);
       String authorization = request.getHeader("Authorization");
       String dpop = request.getHeader("DPoP");
-      
+
       String sessionToken =
           (session == null) ? null : (String) session.getAttribute("access_token");
 
@@ -64,22 +64,37 @@ public class AuthFilter implements Filter {
 
         return;
       }
-      
+
       String presentedToken = authorization.substring("DPoP ".length());
-      
-      if (sessionToken == null || !sessionToken.equals(presentedToken)) {
-        ((HttpServletResponse) resp).sendError(401, "Invalid access token");
+
+      JwtClaims claims;
+
+      try {
+        JwtConsumer consumer = new JwtConsumerBuilder()
+                                   .setSkipAllValidators()
+                                   .setDisableRequireSignature()
+                                   .setSkipSignatureVerification()
+                                   .build();
+
+        claims = consumer.processToClaims(presentedToken);
+
+      } catch (Exception e) {
+        ((HttpServletResponse) resp).sendError(401, "Invalid JWT");
         return;
       }
 
-      chain.doFilter(req, resp);
+      String username = claims.getStringClaimValue("preferred_username");
+      if (username == null) {
+        ((HttpServletResponse) resp).sendError(401, "preferred_username missing");
+
+        chain.doFilter(req, resp);
+      }
+    }
+
+    /* (non-Java-doc)
+     * @see javax.servlet.Filter#destroy()
+     */
+    public void destroy() {
+      // do nothing
     }
   }
-
-  /* (non-Java-doc)
-   * @see javax.servlet.Filter#destroy()
-   */
-  public void destroy() {
-    // do nothing
-  }
-}
