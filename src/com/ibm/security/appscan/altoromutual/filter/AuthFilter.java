@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * This class ensures that the user is authenticated when they try to access
  * account section of the site, and redirects to the login page if they are not.
- * @author Alexei
  *
  */
 public class AuthFilter implements Filter {
@@ -58,18 +57,24 @@ public class AuthFilter implements Filter {
     if (req instanceof HttpServletRequest) {
       HttpServletRequest request = (HttpServletRequest) req;
       Object user = request.getSession().getAttribute(ServletUtil.SESSION_ATTR_USER);
+      String authorization = request.getHeader("Authorization");
+      String dpop = request.getHeader("DPoP");
+
       if (user == null || !(user instanceof User)) {
         ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
         return;
       } else {
-        String dpop = request.getHeader("DPoP");
+        if (authorization == null || !authorization.startsWith("DPoP ")) {
+          ((HttpServletResponse) resp).sendError(401, "Authorization header required");
 
-        if (dpop == null) {
-          ((HttpServletResponse) resp).sendError(401, "DPoP header required");
           return;
         }
 
-        chain.doFilter(req, resp);
+        if (dpop == null) {
+          ((HttpServletResponse) resp).sendError(401, "DPoP header required");
+
+          return;
+        }
       }
     }
   }
