@@ -91,11 +91,12 @@ public class AuthFilter implements Filter {
       }
       chain.doFilter(req, resp);
     }
-
-    /* (non-Java-doc)
-     * @see javax.servlet.Filter#destroy()
-     */
-    public void destroy() {
-      // do nothing
-    }
   }
+
+  /* (non-Java-doc)
+   * @see javax.servlet.Filter#destroy()
+   */
+  public void destroy() {
+    // do nothing
+  }
+}
