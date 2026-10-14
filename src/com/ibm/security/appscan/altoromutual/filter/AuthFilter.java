@@ -64,7 +64,12 @@ public class AuthFilter implements Filter {
 				return;
 			}
 			else {
-				chain.doFilter(req, resp);
+				//chain.doFilter(req, resp);
+				((HttpServletResponse)resp)
+    				.sendError(
+        			599,
+        			"AuthFilter Invoked");
+				return;
 			}
 		}
 	}
