@@ -11,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jose4j.jwt.JwtClaims;
 
 /**
  * This class ensures that the user is authenticated when they try to access
