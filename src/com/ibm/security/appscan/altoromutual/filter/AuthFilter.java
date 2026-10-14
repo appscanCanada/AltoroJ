@@ -39,11 +39,12 @@ public class AuthFilter implements Filter {
       throws IOException, ServletException {
     if (req instanceof HttpServletRequest) {
       HttpServletRequest request = (HttpServletRequest) req;
-      /*
+    
       Object user = request.getSession().getAttribute(ServletUtil.SESSION_ATTR_USER);
       String authorization = request.getHeader("Authorization");
       String dpop = request.getHeader("DPoP");
-      */
+
+      //temp debug code
       javax.servlet.http.HttpSession session =
             request.getSession(false);
 
@@ -64,6 +65,7 @@ public class AuthFilter implements Filter {
             "] USER=[" + user + "]");
 
         return;
+        //temp debug code end
       if (user == null || !(user instanceof User)) {
         ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
         
