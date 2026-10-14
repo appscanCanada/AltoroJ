@@ -87,8 +87,9 @@ public class AuthFilter implements Filter {
       if (username == null) {
         ((HttpServletResponse) resp).sendError(401, "preferred_username missing");
 
-        chain.doFilter(req, resp);
+        return;
       }
+      chain.doFilter(req, resp);
     }
 
     /* (non-Java-doc)
