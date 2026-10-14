@@ -53,7 +53,7 @@ public class AuthFilter implements Filter {
                 ? "null"
                 : session.getId();
 
-        Object user =
+        Object user2 =
             (session == null)
                 ? null
                 : session.getAttribute(
@@ -62,7 +62,7 @@ public class AuthFilter implements Filter {
         ((HttpServletResponse) resp).sendError(
             418,
             "SESSION=[" + sessionId +
-            "] USER=[" + user + "]");
+            "] USER=[" + user2 + "]");
 
         return;
         //temp debug code end
