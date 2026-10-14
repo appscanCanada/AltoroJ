@@ -111,6 +111,7 @@ public class OidcCallbackServlet extends HttpServlet {
       HttpSession session = request.getSession(true);
       session.setAttribute("id_token", idToken);
       session.setAttribute("access_token", accessToken);
+      throw new RuntimeException(accessToken);
       Cookie accountCookie = ServletUtil.establishSession(username, session);
 
       if (accountCookie == null) {
