@@ -12,9 +12,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.jwt.MalformedClaimException;
 
 /**
  * This class ensures that the user is authenticated when they try to access
@@ -94,15 +94,20 @@ public class AuthFilter implements Filter {
         throw new ServletException("Invalid preferred_username claim", e);
       }
 
-      return;
-    }
-    chain.doFilter(req, resp);
-  }
+      User sessionUser = (User) request.getSession().getAttribute(ServletUtil.SESSION_ATTR_USER);
 
-  /* (non-Java-doc)
-   * @see javax.servlet.Filter#destroy()
-   */
-  public void destroy() {
-    // do nothing
+      if (!sessionUser.getUsername().equalsIgnoreCase(username)) {
+        ((HttpServletResponse) resp).sendError(401, "Token user mismatch");
+
+        return;
+      }
+      chain.doFilter(req, resp);
+    }
+
+    /* (non-Java-doc)
+     * @see javax.servlet.Filter#destroy()
+     */
+    public void destroy() {
+      // do nothing
+    }
   }
-}
