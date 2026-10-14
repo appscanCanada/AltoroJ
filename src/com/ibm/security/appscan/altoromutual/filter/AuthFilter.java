@@ -62,6 +62,7 @@ public class AuthFilter implements Filter {
 
             return;
             // temp debug code end
+            /*
             if (user == null || !(user instanceof User)) {
                 ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
 
@@ -79,6 +80,7 @@ public class AuthFilter implements Filter {
                 return;
             }
             chain.doFilter(req, resp);
+            */
         }
     }
 
