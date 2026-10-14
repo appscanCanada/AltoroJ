@@ -43,6 +43,14 @@ public class AuthFilter implements Filter {
       String authorization = request.getHeader("Authorization");
       String dpop = request.getHeader("DPoP");
 
+      ((HttpServletResponse) resp)
+    .sendError(
+        418,
+        "AUTH=[" + authorization +
+        "] DPOP=[" + dpop + "]");
+
+return;
+
       if (user == null || !(user instanceof User)) {
         ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
         return;
