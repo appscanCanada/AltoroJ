@@ -58,6 +58,7 @@ public class AuthFilter implements Filter {
 
         return;
       }
+      chain.doFilter(req, resp);
     }
   }
 
