@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.jwt.MalformedClaimException;
 
 /**
  * This class ensures that the user is authenticated when they try to access
