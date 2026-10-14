@@ -44,8 +44,7 @@ public class AuthFilter implements Filter {
       javax.servlet.http.HttpSession session = request.getSession(false);
       String authorization = request.getHeader("Authorization");
       String dpop = request.getHeader("DPoP");
-
-      String presentedToken = authorization.substring("DPoP ".length());
+      
       String sessionToken =
           (session == null) ? null : (String) session.getAttribute("access_token");
 
@@ -65,7 +64,9 @@ public class AuthFilter implements Filter {
 
         return;
       }
-
+      
+      String presentedToken = authorization.substring("DPoP ".length());
+      
       if (sessionToken == null || !sessionToken.equals(presentedToken)) {
         ((HttpServletResponse) resp).sendError(401, "Invalid access token");
         return;
