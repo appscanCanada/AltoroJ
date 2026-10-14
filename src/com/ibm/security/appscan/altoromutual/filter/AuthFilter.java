@@ -86,20 +86,24 @@ public class AuthFilter implements Filter {
         return;
       }
 
-      String username = claims.getStringClaimValue("preferred_username");
-      if (username == null) {
-        ((HttpServletResponse) resp).sendError(401, "preferred_username missing");
+      String username;
 
-        return;
+      try {
+        username = claims.getStringClaimValue("preferred_username");
+      } catch (MalformedClaimException e) {
+        throw new ServletException("Invalid preferred_username claim", e);
       }
-      chain.doFilter(req, resp);
-    }
-  }
 
-  /* (non-Java-doc)
-   * @see javax.servlet.Filter#destroy()
-   */
-  public void destroy() {
-    // do nothing
+      return;
+    }
+    chain.doFilter(req, resp);
   }
+}
+
+/* (non-Java-doc)
+ * @see javax.servlet.Filter#destroy()
+ */
+public void destroy() {
+  // do nothing
+}
 }
