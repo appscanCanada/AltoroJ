@@ -94,12 +94,6 @@ public class AuthFilter implements Filter {
         throw new ServletException("Invalid preferred_username claim", e);
       }
 
-      ((HttpServletResponse) resp).sendError(
-    418,
-    "JWT username = " + username);
-
-return;
-
       User sessionUser = (User) request.getSession().getAttribute(ServletUtil.SESSION_ATTR_USER);
 
       if (!sessionUser.getUsername().equalsIgnoreCase(username)) {
