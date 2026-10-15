@@ -28,9 +28,6 @@ public class DpopAuthenticationFilter implements Filter {
     System.out.println("DPoP = " + dpop);
 
     chain.doFilter(request, response);
-
-    throw new ServletException(
-      "DpopAuthenticationFilter was invoked");
   }
   @Override
   public void destroy() {
