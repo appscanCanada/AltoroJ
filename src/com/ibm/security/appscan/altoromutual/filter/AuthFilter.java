@@ -48,7 +48,7 @@ public class AuthFilter implements Filter {
       javax.servlet.http.HttpSession session = request.getSession(false);
       String sessionToken =
           (session == null) ? null : (String) session.getAttribute("access_token");
-      // String authorization = request.getHeader("Authorization");
+      String authorization = request.getHeader("Authorization");
       String dpop = request.getHeader("DPoP");
 
       if (user == null || !(user instanceof User)) {
@@ -56,12 +56,18 @@ public class AuthFilter implements Filter {
 
         return;
       }
-      /*
+
+      if (authorization == null || !authorization.startsWith("DPoP ")) {
+        ((HttpServletResponse) resp).sendError(401, "Authorization header required");
+
+        return;
+      }
+
       if (dpop == null) {
         ((HttpServletResponse) resp).sendError(401, "DPoP header required");
 
         return;
-      } */
+      }
 
       if (sessionToken == null) {
         ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
@@ -69,7 +75,7 @@ public class AuthFilter implements Filter {
         return;
       }
 
-      String presentedToken = sessionToken;
+      String presentedToken = authorization.substring("DPoP ".length());
 
       if (sessionToken == null) {
         ((HttpServletResponse) resp).sendRedirect(request.getContextPath() + "/login.jsp");
