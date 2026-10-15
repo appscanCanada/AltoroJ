@@ -71,7 +71,25 @@ public class AuthFilter implements Filter {
       }
 
       String presentedToken = authorization.substring("DPoP ".length());
+      if (sessionToken == null) {
+    ((HttpServletResponse) resp)
+        .sendError(
+            401,
+            "No session access token");
 
+    return;
+}
+
+if (!sessionToken.equals(presentedToken)) {
+    ((HttpServletResponse) resp)
+        .sendError(
+            401,
+            "Expected token begins: "
+            + sessionToken.substring(0, 30));
+
+    return;
+}
+/*
       JwtClaims claims;
 
       try {
@@ -115,7 +133,7 @@ public class AuthFilter implements Filter {
         ((HttpServletResponse) resp).sendError(401, "Token user mismatch");
 
         return;
-      }
+      } */
       chain.doFilter(req, resp);
     }
   }
