@@ -47,9 +47,7 @@ public class AuthFilter implements Filter {
       Object user = request.getSession().getAttribute(ServletUtil.SESSION_ATTR_USER);
       javax.servlet.http.HttpSession session = request.getSession(false);
       String sessionToken =
-        (session == null)
-          ? null
-          : (String) session.getAttribute("access_token");
+          (session == null) ? null : (String) session.getAttribute("access_token");
       String authorization = request.getHeader("Authorization");
       String dpop = request.getHeader("DPoP");
 
@@ -72,24 +70,11 @@ public class AuthFilter implements Filter {
 
       String presentedToken = authorization.substring("DPoP ".length());
       if (sessionToken == null) {
-    ((HttpServletResponse) resp)
-        .sendError(
-            401,
-            "No session access token");
+        ((HttpServletResponse) resp).sendError(401, "No session access token");
 
-    return;
-}
+        return;
+      }
 
-if (!sessionToken.equals(presentedToken)) {
-    ((HttpServletResponse) resp)
-        .sendError(
-            401,
-            "Expected token begins: "
-            + sessionToken);
-
-    return;
-}
-/*
       JwtClaims claims;
 
       try {
@@ -133,7 +118,7 @@ if (!sessionToken.equals(presentedToken)) {
         ((HttpServletResponse) resp).sendError(401, "Token user mismatch");
 
         return;
-      } */
+      }
       chain.doFilter(req, resp);
     }
   }
