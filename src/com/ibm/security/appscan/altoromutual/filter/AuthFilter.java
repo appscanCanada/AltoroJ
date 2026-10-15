@@ -46,6 +46,10 @@ public class AuthFilter implements Filter {
 
       Object user = request.getSession().getAttribute(ServletUtil.SESSION_ATTR_USER);
       javax.servlet.http.HttpSession session = request.getSession(false);
+      String sessionToken =
+        (session == null)
+          ? null
+          : (String) session.getAttribute("access_token");
       String authorization = request.getHeader("Authorization");
       String dpop = request.getHeader("DPoP");
 
