@@ -23,6 +23,11 @@ IBM AltoroJ
     
 <jsp:include page="/header.jspf"/>
 
+<script>
+window.accessToken =
+    '<%= session.getAttribute("access_token") %>';
+</script>
+
 <div id="wrapper" style="width: 99%;">
 	<jsp:include page="membertoc.jspf"/>
 	<td valign="top" colspan="3" class="bb">
@@ -39,6 +44,31 @@ IBM AltoroJ
 		<p>
 		  Welcome to Altoro Mutual Online.
 		</p>
+
+<button id="testAuthButton">
+    Test Authenticated Request
+</button>
+
+<script>
+document.getElementById("testAuthButton")
+    .addEventListener("click", function () {
+
+        fetch("/altoromutual/bank/main.jsp", {
+            headers: {
+                "Authorization":
+                    "DPoP " + window.accessToken,
+                "DPoP":
+                    "test-proof"
+            }
+        })
+        .then(response => {
+            alert("HTTP Status: " + response.status);
+        })
+        .catch(error => {
+            alert(error);
+        });
+    });
+</script>
 		
 		<form name="details" method="get" action="showAccount">
 		<table border="0">
