@@ -85,7 +85,7 @@ if (!sessionToken.equals(presentedToken)) {
         .sendError(
             401,
             "Expected token begins: "
-            + sessionToken;
+            + sessionToken);
 
     return;
 }
