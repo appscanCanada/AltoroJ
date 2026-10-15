@@ -91,10 +91,24 @@ public class AuthFilter implements Filter {
       try {
         username = claims.getStringClaimValue("preferred_username");
       } catch (MalformedClaimException e) {
-        throw new ServletException("Invalid preferred_username claim", e);
+        ((HttpServletResponse) resp).sendError(401, "Invalid preferred_username claim");
+
+        return;
+      }
+
+      if (username == null || username.trim().isEmpty()) {
+        ((HttpServletResponse) resp).sendError(401, "preferred_username missing");
+
+        return;
       }
 
       User sessionUser = (User) request.getSession().getAttribute(ServletUtil.SESSION_ATTR_USER);
+
+      if (sessionUser == null) {
+        ((HttpServletResponse) resp).sendError(401, "No authenticated session user");
+
+        return;
+      }
 
       if (!sessionUser.getUsername().equalsIgnoreCase(username)) {
         ((HttpServletResponse) resp).sendError(401, "Token user mismatch");
