@@ -16,6 +16,7 @@ function navigateWithAuth(url) {
         document.close();
 
         hookLinks();
+        hookForms();
     });
 }
 
