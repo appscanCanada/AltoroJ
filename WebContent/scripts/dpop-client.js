@@ -1,6 +1,3 @@
-window.accessToken =
-    '<%= session.getAttribute("access_token") %>';
-
 function navigateWithAuth(url) {
 
     fetch(url, {
