@@ -9,26 +9,18 @@
 Loading...
 
 <script>
-const token =
+window.accessToken =
     '<%= session.getAttribute("access_token") %>';
+</script>
 
-fetch('/altoromutual/bank/main.jsp', {
-    headers: {
-        'Authorization': 'DPoP ' + token,
-        'DPoP': 'test-proof'
-    }
-})
-.then(response => response.text())
-.then(html => {
-    document.open();
-    document.write(html);
-    document.close();
-})
-.catch(error => {
-    document.body.innerHTML =
-        '<h1>Bootstrap failed</h1><pre>' +
-        error +
-        '</pre>';
+<script src="<%=request.getContextPath() %>/scripts/dpop-client.js"></script>
+
+<script>
+window.addEventListener("load", function () {
+
+    navigateWithAuth(
+        '<%= request.getContextPath() %>/bank/main.jsp');
+
 });
 </script>
 
