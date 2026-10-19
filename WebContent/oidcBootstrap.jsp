@@ -23,6 +23,8 @@
 
                 console.log("Service Worker ready");
 
+                console.log("controller:", navigator.serviceWorker.controller);
+
                 window.location.replace(
                 "<%= request.getContextPath() %>/bank/main.jsp");
                 });
