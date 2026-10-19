@@ -27,6 +27,8 @@
 
                 console.log("controller:", navigator.serviceWorker.controller);
 
+                navigator.serviceWorker.addEventListener("message", function(event) {console.log(event.data);});
+
                 window.location.replace(
                 "<%= request.getContextPath() %>/bank/main.jsp");
                 });
