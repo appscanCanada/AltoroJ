@@ -14,7 +14,7 @@
 
                 navigator.serviceWorker
                 .register(
-                "<%= request.getContextPath() %>/sw.js")
+                "<%= request.getContextPath() %>/serviceWorker.js")
                 .then(function() {
 
                 window.location.replace(
