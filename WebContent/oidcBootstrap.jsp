@@ -1,28 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 
-<html>
-<head>
-    <title>OIDC Bootstrap</title>
-</head>
-<body>
+    <html>
+        <head>
+            <title>OIDC Bootstrap</title>
+        </head>
+        <body>
 
-Loading...
+            Loading...
 
-<script>
-window.accessToken =
-    '<%= session.getAttribute("access_token") %>';
-</script>
+            <script>
+                window.accessToken =
+                '<%= session.getAttribute("access_token") %>';
 
-<script src="<%=request.getContextPath() %>/scripts/dpop-client.js"></script>
+                navigator.serviceWorker
+                .register(
+                "<%= request.getContextPath() %>/sw.js")
+                .then(function() {
 
-<script>
-window.addEventListener("load", function () {
+                window.location.replace(
+                "<%= request.getContextPath() %>/bank/main.jsp");
 
-    navigateWithAuth(
-        '<%= request.getContextPath() %>/bank/main.jsp');
+                });
+            </script>
 
-});
-</script>
-
-</body>
-</html>
+        </body>
+    </html>
