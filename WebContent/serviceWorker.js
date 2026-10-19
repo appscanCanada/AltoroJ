@@ -39,10 +39,13 @@ self.addEventListener("install", event => {
 
 async function handleRequest(event) {
 
+    console.log("clientId=[" + event.clientId + "]");
+    
     const client =
         await self.clients.get(event.clientId);
 
     if (!client) {
+        console.log("No client found");
         return fetch(event.request);
     }
 
