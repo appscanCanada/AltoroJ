@@ -44,6 +44,8 @@ async function handleRequest(event) {
     const client =
         await self.clients.get(event.clientId);
 
+     console.log("client=", client);
+
     if (!client) {
         console.log("No client found");
         return fetch(event.request);
@@ -55,6 +57,7 @@ async function handleRequest(event) {
     console.log("Token received:", token);
 
     if (!token) {
+        console.log("No token received");
         return fetch(event.request);
     }
 
