@@ -6,6 +6,24 @@ self.addEventListener("fetch", event => {
 
 });
 
+self.addEventListener("activate", event => {
+
+    console.log("SW activated");
+
+    event.waitUntil(
+        self.clients.claim()
+    );
+
+});
+
+self.addEventListener("install", event => {
+
+    console.log("SW installed");
+
+    self.skipWaiting();
+
+});
+
 async function handleRequest(event) {
 
     const client =
