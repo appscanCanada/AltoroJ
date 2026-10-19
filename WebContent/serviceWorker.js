@@ -1,8 +1,10 @@
+console.log("serviceWorker.js loaded");
+
 self.addEventListener("fetch", event => {
 
-    event.respondWith(
-        handleRequest(event)
-    );
+    console.log("SW fetch:", event.request.url);
+    
+    event.respondWith(handleRequest(event));
 
 });
 
