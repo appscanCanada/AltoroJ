@@ -2,7 +2,7 @@ console.log("serviceWorker.js loaded");
 
 self.addEventListener("fetch", event => {
 
-    console.log("SW fetch:", event.request.url);
+    console.log("SW fetch:", event.request.method, event.request.url);
     
     event.respondWith(handleRequest(event));
 
