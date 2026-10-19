@@ -14,7 +14,7 @@
 
                 navigator.serviceWorker
                 .register(
-                "<%= request.getContextPath() %>/scripts/serviceWorker.js")
+                "<%= request.getContextPath() %>/serviceWorker.js")
                 .then(async function(registration) {
 
                 console.log("Service Worker registered");
