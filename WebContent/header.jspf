@@ -27,10 +27,12 @@ IBM AltoroJ
 <% boolean loggedIn = request.getSession().getAttribute("user") != null; %>
 
 <head>
-	<title>Altoro Mutual</title>
+  <title>Altoro Mutual</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <link href="<%=request.getContextPath()%>/style.css" rel="stylesheet" type="text/css" />
+  <script src="<%=request.getContextPath()%>/scripts/serviceWorker-token-provider.js"></script>
 </head>
+
 <body style="margin-top:5px;">
 
 <div id="header" style="margin-bottom:5px; width: 99%;">
