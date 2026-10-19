@@ -38,6 +38,8 @@ async function handleRequest(event) {
     const token =
         await requestToken(client);
 
+    console.log("Token received:", token);
+
     if (!token) {
         return fetch(event.request);
     }
