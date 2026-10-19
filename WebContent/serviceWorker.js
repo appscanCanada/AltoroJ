@@ -2,7 +2,18 @@ console.log("serviceWorker.js loaded");
 
 self.addEventListener("fetch", event => {
 
-    console.log("SW fetch:", event.request.method, event.request.url);
+    event.waitUntil(
+        self.clients.matchAll()
+            .then(clients => {
+                clients.forEach(client => {
+                    client.postMessage(
+                        "SW fetch: " +
+                        event.request.method +
+                        " " +
+                        event.request.url);
+                });
+            })
+    );
     
     event.respondWith(handleRequest(event));
 
