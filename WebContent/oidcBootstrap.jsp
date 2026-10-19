@@ -9,30 +9,40 @@
             Loading...
 
             <script>
-                window.accessToken =
-                '<%= session.getAttribute("access_token") %>';
 
-                sessionStorage.setItem("accessToken",window.accessToken);
+window.accessToken =
+    '<%= session.getAttribute("access_token") %>';
 
-                navigator.serviceWorker
-                .register(
-                "<%= request.getContextPath() %>/serviceWorker.js")
-                .then(async function(registration) {
+sessionStorage.setItem(
+    "accessToken",
+    window.accessToken);
 
-                console.log("Service Worker registered");
+navigator.serviceWorker
+    .register(
+        "<%= request.getContextPath() %>/serviceWorker.js")
+    .then(async function() {
 
-                await navigator.serviceWorker.ready;
+        await navigator.serviceWorker.ready;
 
-                console.log("Service Worker ready");
+        if (!navigator.serviceWorker.controller &&
+            !sessionStorage.getItem(
+                "swBootstrapReload")) {
 
-                console.log("controller:", navigator.serviceWorker.controller);
+            sessionStorage.setItem(
+                "swBootstrapReload",
+                "true");
 
-                navigator.serviceWorker.addEventListener("message", function(event) {console.log(event.data);});
+            window.location.reload();
 
-                window.location.replace(
-                "<%= request.getContextPath() %>/bank/main.jsp");
-                });
-            </script>
+            return;
+        }
+
+        window.location.replace(
+            "<%= request.getContextPath() %>/bank/main.jsp");
+
+    });
+
+</script>
 
         </body>
     </html>
