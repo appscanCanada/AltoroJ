@@ -22,6 +22,15 @@ async function handleRequest(event) {
         return fetch(event.request);
     }
 
+    const url =
+    new URL(event.request.url);
+
+if (!url.pathname.startsWith(
+        "/altoromutual")) {
+
+    return fetch(event.request);
+}
+
     const headers =
         new Headers(event.request.headers);
 
