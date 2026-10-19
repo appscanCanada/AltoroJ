@@ -12,6 +12,8 @@
                 window.accessToken =
                 '<%= session.getAttribute("access_token") %>';
 
+                sessionStorage.setItem("accessToken",window.accessToken);
+
                 navigator.serviceWorker
                 .register(
                 "<%= request.getContextPath() %>/serviceWorker.js")
