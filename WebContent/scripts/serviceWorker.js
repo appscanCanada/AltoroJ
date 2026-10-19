@@ -40,3 +40,28 @@ async function handleRequest(event) {
 
     return fetch(request);
 }
+
+function requestToken(client) {
+
+    return new Promise(resolve => {
+
+        const channel =
+            new MessageChannel();
+
+        channel.port1.onmessage =
+            event => {
+
+                resolve(
+                    event.data);
+
+            };
+
+        client.postMessage(
+            {
+                type:
+                    "GET_ACCESS_TOKEN"
+            },
+            [channel.port2]);
+
+    });
+}
