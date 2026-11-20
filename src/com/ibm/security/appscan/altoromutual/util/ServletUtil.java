@@ -340,6 +340,9 @@ public class ServletUtil {
 	public static Cookie establishSession(String username, HttpSession session){
 		try{
 			User user = DBUtil.getUserInfo(username);
+			if (user == null) {
+				return null;
+			}
 			Account[] accounts = user.getAccounts();
 		    String accountStringList = Account.toBase64List(accounts);
 		    Cookie accountCookie = new Cookie(ServletUtil.ALTORO_COOKIE, accountStringList);
