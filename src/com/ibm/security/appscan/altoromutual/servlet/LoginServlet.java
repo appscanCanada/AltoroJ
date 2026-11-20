@@ -62,7 +62,7 @@ public class LoginServlet extends HttpServlet {
       String postLogoutUrl;
 
       if ("userNotFound".equals(reason)) {
-        postLogoutUrl = "http://localhost:8088/altoromutual/userNotFound.jsp"
+        postLogoutUrl = ConfigUtil.get("keycloak.userNotFoundRedirectUri") 
             + "?user=" + URLEncoder.encode(username, "UTF-8");
 
       } else {
@@ -75,7 +75,7 @@ public class LoginServlet extends HttpServlet {
         session.invalidate();
       }
 
-      String logoutUrl = ConfigUtil.get("keycloak.url") + "/realms/"
+      String logoutUrl = ConfigUtil.get("keycloak.publicUrl") + "/realms/"
           + ConfigUtil.get("keycloak.realm") + "/protocol/openid-connect/logout"
           + "?client_id=" + ConfigUtil.get("keycloak.clientId")
           + "&id_token_hint=" + URLEncoder.encode(idToken, "UTF-8")

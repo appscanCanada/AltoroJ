@@ -10,19 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 
 public class OidcLoginServlet extends HttpServlet {
 
-    String clientId = ConfigUtil.get("keycloak.clientId");
-
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        String redirectUri =
-            "http://localhost:8088/altoromutual/oidc/callback";
-
         String authUrl =
-            ConfigUtil.get("keycloak.url")
+            ConfigUtil.get("keycloak.publicUrl")
             + "/realms/"
             + ConfigUtil.get("keycloak.realm")
             + "/protocol/openid-connect/auth"

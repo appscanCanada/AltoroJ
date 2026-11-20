@@ -29,7 +29,7 @@ public class OidcCallbackServlet extends HttpServlet {
         + ConfigUtil.getClientSecret() + "&code=" + URLEncoder.encode(code, "UTF-8")
         + "&redirect_uri=" + URLEncoder.encode(ConfigUtil.get("keycloak.redirectUri"), "UTF-8");
 
-    String tokenEndpoint = ConfigUtil.get("keycloak.url") + "/realms/"
+    String tokenEndpoint = ConfigUtil.get("keycloak.internalUrl") + "/realms/"
         + ConfigUtil.get("keycloak.realm") + "/protocol/openid-connect/token";
 
     URL url = new URL(tokenEndpoint);
