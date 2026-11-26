@@ -80,7 +80,7 @@ public class OidcCallbackServlet extends HttpServlet {
       }
       
       response.addCookie(accountCookie);
-      response.sendRedirect(request.getContextPath() + "/bank/main.jsp");
+      response.sendRedirect(request.getContextPath() + "/dpopInit.jsp");
       return;
       
     } catch (JSONException e) {
