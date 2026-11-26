@@ -58,6 +58,12 @@
     <dispatcher>ERROR</dispatcher>
   </filter-mapping>
   <servlet>
+    <servlet-name>RegisterDpopKeyServlet</servlet-name>
+    <servlet-class>
+        com.ibm.security.appscan.altoromutual.servlet.RegisterDpopKeyServlet
+    </servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>AltoroAPI</servlet-name>
     <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
     <init-param>
@@ -166,6 +172,20 @@
     <servlet-class>
       com.ibm.security.appscan.altoromutual.servlet.OidcCallbackServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>ShowDpopInfoServlet</servlet-name>
+    <servlet-class>
+        com.ibm.security.appscan.altoromutual.servlet.ShowDpopInfoServlet
+    </servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ShowDpopInfoServlet</servlet-name>
+    <url-pattern>/bank/showDpopInfo</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>RegisterDpopKeyServlet</servlet-name>
+    <url-pattern>/bank/registerDpopKey</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
     <url-pattern>/doLogin</url-pattern>

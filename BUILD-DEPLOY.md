@@ -206,3 +206,10 @@ gradle clean war --no-daemon
 Failure to copy updated files into the build container will result in the previous code being deployed.
 
 ---
+
+## Important
+The build container contains its own working copy: /home/gradle/project
+Historically this copy contains local OIDC modifications that are not tracked by the branch checked out inside the container.
+Before building, copy modified source files from: /opt/altoroj-oidc/source to: /home/gradle/project using docker cp.
+
+Do not assume the Git branch inside the build container matches the Git branch checked out on the host.

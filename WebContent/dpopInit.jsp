@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Initializing Security</title>
+    <title>Initializing Security</title>
 </head>
 <body>
 
@@ -17,23 +17,54 @@
 
     try {
 
-        const keys = await DpopClient.getOrCreateKeys();
+        const keys =
+            await DpopClient.getOrCreateKeys();
 
-	const jkt = await DpopClient.getJkt();
+        const jkt =
+            await DpopClient.getJkt();
 
-        console.log("JKT", jkt);
+        const response =
+            await fetch(
+                "/bank/registerDpopKey",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/x-www-form-urlencoded"
+                    },
+                    body:
+                        "jkt=" +
+                        encodeURIComponent(jkt)
+                }
+            );
 
-        document.body.innerHTML +=
-            "<hr><h3>JKT</h3><pre>" +
-            jkt +
-            "</pre>";
+	const responseBody = await response.text();
+
+        console.log(
+            "Registration status",
+            responseBody
+        );
+
+        console.log(
+            "JKT",
+            jkt
+        );
 
         console.log(
             "DPoP keypair initialized",
             keys
         );
 
-        // window.location = "<%=request.getContextPath()%>/bank/main.jsp";
+        document.body.innerHTML +=
+            "<hr>" +
+            "<h3>JKT</h3>" +
+            "<pre>" + jkt + "</pre>" +
+            "<p><b>Registration Status:</b> "
+            + response.status +
+            "</p>";
+
+        // window.location =
+        //     "<%=request.getContextPath()%>/bank/main.jsp";
 
     } catch (e) {
 
@@ -49,3 +80,4 @@
 
 </body>
 </html>
+
