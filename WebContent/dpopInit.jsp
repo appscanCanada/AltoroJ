@@ -40,6 +40,13 @@
 
 	const responseBody = await response.text();
 
+	const proof =
+            await DpopClient.generateProof(
+                "POST",
+                window.location.origin
+                + "/bank/dpopTest"
+            );
+
         console.log(
             "Registration status",
             responseBody
@@ -59,6 +66,8 @@
             "<hr>" +
             "<h3>JKT</h3>" +
             "<pre>" + jkt + "</pre>" +
+	    "<h3>DPoP Proof</h3>" +
+            "<pre>" + proof + "</pre>" +
             "<p><b>Registration Status:</b> "
             + response.status +
             "</p>";

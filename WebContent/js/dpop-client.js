@@ -23,6 +23,83 @@ var DpopClient = (function() {
             .replace(/=+$/, "");
     }
 
+    async function generateProof(method, url) {
+
+        const keys =
+            await getOrCreateKeys();
+
+        const publicJwk =
+            await crypto.subtle.exportKey(
+                "jwk",
+                keys.publicKey
+            );
+
+        const header = {
+            typ: "dpop+jwt",
+            alg: "ES256",
+            jwk: {
+                kty: publicJwk.kty,
+                crv: publicJwk.crv,
+                x: publicJwk.x,
+                y: publicJwk.y
+            }
+        };
+
+        const payload = {
+            jti: generateJti(),
+            iat: Math.floor(Date.now() / 1000),
+            htm: method,
+            htu: url
+        };
+
+        const encodedHeader =
+            base64UrlString(
+                JSON.stringify(header)
+            );
+
+        const encodedPayload =
+            base64UrlString(
+                JSON.stringify(payload)
+            );
+
+        const signingInput =
+            encodedHeader + "." + encodedPayload;
+
+        const signature =
+            await crypto.subtle.sign({
+                    name: "ECDSA",
+                    hash: {
+                        name: "SHA-256"
+                    }
+                },
+                keys.privateKey,
+                new TextEncoder().encode(
+                    signingInput
+                )
+            );
+
+        const encodedSignature =
+            base64Url(
+                new Uint8Array(signature)
+            );
+
+        console.log(
+            "DPoP payload",
+            payload
+        );
+
+        console.log(
+            "DPoP header",
+            header
+        );
+
+        return (
+            signingInput +
+            "." +
+            encodedSignature
+        );
+    }
+
     async function getJkt() {
 
         const keys =
@@ -47,6 +124,12 @@ var DpopClient = (function() {
 
         return base64Url(digest);
     }
+
+    function generateJti() {
+
+        return crypto.randomUUID();
+    }
+
 
 
     async function openDb() {
@@ -78,6 +161,13 @@ var DpopClient = (function() {
                 () => reject(request.error);
 
         });
+    }
+
+    function base64UrlString(str) {
+
+        return base64Url(
+            new TextEncoder().encode(str)
+        );
     }
 
     async function getOrCreateKeys() {
@@ -135,7 +225,8 @@ var DpopClient = (function() {
 
     return {
         getOrCreateKeys,
-	getJkt    
+        getJkt,
+        generateProof
     };
 
 })();
